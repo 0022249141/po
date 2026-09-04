@@ -1,0 +1,68 @@
+version: 1
+result_id: xauusd_ny_preopen_range_breakout_baseline_v1_gross_result_20260904
+strategy_spec_id: xauusd_ny_preopen_range_breakout_baseline_v1
+evaluation_id: xauusd_ny_preopen_range_breakout_baseline_v1_gross_signal_eval
+status: recorded
+result_type: compact_gross_signal_result
+recorded_at_utc: "2026-09-04T08:07:00Z"
+
+provenance:
+  execution_environment: user_local_windows
+  execution_command: >-
+    py tools/run_strategy_signal_backtest.py
+    .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\XAUUSD_o_M5_bars_utc.csv
+    --output .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\strategy_signal_backtest_v1.json
+  raw_result_path_external: MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\strategy_signal_backtest_v1.json
+  raw_result_committed: false
+  source_note: >-
+    Compact project record transcribed from the user-reported successful local execution output.
+    The complete trade ledger remains outside Git with the canonical MT5 UTC bundle.
+
+binding:
+  strategy_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml
+  evaluation_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.evaluation.yaml
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  session_policy_id: xauusd_major_fx_sessions_v1
+  backtest_class: gross_signal_research_v1
+  cost_model: gross_zero_cost_signal_evaluation
+
+sample:
+  trade_count: 101
+  long_trades: 51
+  short_trades: 50
+  eligible_months: 7
+  positive_months: 6
+
+metrics:
+  gross_expectancy_R: 0.07052216031648136
+  gross_profit_factor: 1.1790436996983193
+  max_drawdown_R: 5.856189060756093
+
+acceptance:
+  passed: true
+  checks:
+    minimum_total_trades: true
+    minimum_long_trades: true
+    minimum_short_trades: true
+    gross_expectancy_R_positive: true
+    gross_profit_factor_above_one: true
+    minimum_positive_months: true
+  failure_action_if_failed: reject_v1_without_parameter_tuning
+
+interpretation_boundaries:
+  gross_zero_cost_only: true
+  net_profitability_not_tested: true
+  execution_costs_unresolved: true
+  predictive_edge_not_promoted: true
+  live_trading_prohibited: true
+  parameter_tuning_after_result_prohibited: true
+
+verdict: >-
+  GROSS SIGNAL BASELINE V1 PASSED ITS PRE-FROZEN SIGNAL-RESEARCH ACCEPTANCE GATE on the canonical
+  dataset: 101 trades, positive gross expectancy, gross profit factor above one, and 6 of 7
+  eligible months positive. This does not establish net profitability because spread, commission,
+  slippage, and execution-path effects remain unresolved. The next required stage is frozen
+  execution-cost sensitivity without changing any signal rule.
