@@ -98,9 +98,11 @@ concepts:
   amt_market_profile_core:
     framework: auction_market_theory
     source_ids: [cme_market_profile_education, dalton_mind_over_markets, dalton_markets_in_profile]
-    state: defined
+    state: operational_candidate
     evidence_path: knowledge/04-auction-market-theory/source-notes/cme-dalton-market-profile-verified.md
     definition_path: knowledge/04-auction-market-theory/definitions.md
+    operational_candidate_path: quant/candidates/AMT_TPO_PROFILE_CORE.yaml
+    note: Time-at-price occupancy is a project operational interpretation of the source-supported price/time organization concept; it does not define POC, Value Area, initiative/responsive behavior, or a trading signal.
   amt_price_acceptance_rejection:
     framework: auction_market_theory
     source_ids: [cme_market_profile_education]
