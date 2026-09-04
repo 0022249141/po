@@ -15,7 +15,7 @@ The XAUUSD timebase blocker has been removed for the new canonical UTC bundle `x
 
 A named-session context layer is operational under `docs/NAMED_SESSION_POLICY_PROTOCOL.md`, `config/session-policies/xauusd-major-sessions.yaml`, and `research_core/session_policy.py`. The downstream dataset-selection layer is also operational under `docs/NAMED_SESSION_DATASET_PROTOCOL.md` and `research_core/named_session_dataset.py`, with explicit `complete_only`, `allow_incomplete_with_flag`, and coverage-edge handling. These research sessions remain separate from ICT kill zones and strategy logic.
 
-The first frozen downstream study is now `xauusd_named_session_tpo_descriptive_v1` in `quant/studies/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.yaml`. It pre-registers the canonical dataset, session policy, complete-only selection, TPO features, summary statistics, sample-size rule, comparison direction, no-significance-test boundary, and immutable change control before the aggregate real-data study result is generated.
+The first frozen downstream study is `xauusd_named_session_tpo_descriptive_v1` in `quant/studies/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.yaml`. Its canonical external-data execution has now been completed and compactly recorded in `quant/results/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.result.yaml`, with a human-readable result report under `data/reports/XAUUSD_o_UTC_20260904_052959.named-session-tpo-study-v1.md`. A dedicated result validator prevents the compact record from drifting away from the frozen study specification.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -39,7 +39,8 @@ The repository is **not historically complete** because several pre-existing art
 | Named-session real-data audit | COMPLETE | VERIFIED on canonical M5; sample completeness differs materially by session |
 | TPO dataset adapters | COMPLETE | neutral source-day and canonical named-session smoke tests both verified descriptively |
 | Descriptive study specification gate | COMPLETE validator + CI gate | FIRST FROZEN SPEC registered for named-session TPO |
-| Named-session TPO aggregate study | COMPLETE runner | PENDING LOCAL EXECUTION on canonical external M5 bytes |
+| Descriptive study result gate | COMPLETE validator + CI gate | FIRST COMPACT RESULT recorded and internally bound to frozen spec |
+| Named-session TPO aggregate study | COMPLETE runner | EXECUTED on canonical external M5; descriptive result recorded |
 | MTF qualification engine | COMPLETE | VERIFIED on legacy and canonical H1/M15/M5 bundles |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
 | Quant research workflow | COMPLETE | STRATEGY-DEPENDENT |
@@ -134,7 +135,25 @@ The study is deliberately descriptive rather than a strategy/backtest. It freeze
 - no significance test, no post-result parameter tuning, no hypothesis rewrite;
 - no POC/Value Area, ICT kill-zone substitution, trading signal, profitability, centralized-volume or dealer-inventory claim.
 
-The repository validator `tools/validate_study_specs.py` is now part of CI. `research_core/tpo_study.py` and `tools/run_named_session_tpo_study.py` implement the frozen study without changing those rules.
+The repository validator `tools/validate_study_specs.py` is part of CI. `research_core/tpo_study.py` and `tools/run_named_session_tpo_study.py` implement the frozen study without changing those rules.
+
+## Recorded descriptive result milestone
+
+Compact result: `quant/results/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.result.yaml`.  
+Report: `data/reports/XAUUSD_o_UTC_20260904_052959.named-session-tpo-study-v1.md`.
+
+The local canonical execution passed the sample-size gate with London `n=128` and New York `n=126`; Tokyo had only `n=12` complete sessions and remains secondary descriptive context.
+
+Primary aggregate medians:
+
+- London range: `5,455.5` ticks; New York range: `6,261.5` ticks;
+- London occupancy events: `54,008`; New York occupancy events: `65,066`;
+- London mean-bin-occupancy: `10.2916`; New York: `10.3821`;
+- both primary sessions contain 108 closed M5 bars per complete session.
+
+Therefore New York has the larger aggregate median range and total occupancy-event count in this dataset, while median occupancy density per occupied bin is nearly the same. The study intentionally performs no statistical-significance test and does not establish persistence, causality, prediction, trading edge or profitability.
+
+The compact result is now governed by `research_core/study_result_validation.py` and `tools/validate_study_results.py`; the validator checks binding to the frozen spec, sample-count consistency, primary eligibility and recomputes the recorded median differences/ratios from the recorded session medians.
 
 ## Legacy source-local bundle boundary
 
@@ -153,6 +172,7 @@ The implementation enforces closed bars only, forming-bar no-op behavior, extern
 - AMT acceptance/rejection remains blocked until measurement window, threshold and confirmation rules are source-frozen.
 - Named-session context and dataset construction are operational, but methodology-specific ICT kill zones remain separate and source-extraction work is still required.
 - TPO remains descriptive; POC/Value Area and any trading interpretation require separately sourced/frozen operational rules.
+- The aggregate London/New York descriptive difference is not yet time/regime-robustness qualified.
 - Long-history transaction-cost backtesting still requires a frozen historical spread/slippage/fill model; two-day BID/ASK ticks do not by themselves qualify 180 days of execution costs.
 
 ## Hard blockers that cannot be solved by inference
@@ -173,8 +193,8 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 ## Current next workstream
 
-1. execute the frozen `xauusd_named_session_tpo_descriptive_v1` study on the canonical external M5 bytes and register the resulting compact JSON/report;
-2. review the descriptive result without changing the frozen parameters or converting it into a trading edge claim;
+1. freeze and execute a temporal/regime robustness study for the same London/New York descriptive features without changing V1 definitions;
+2. report monthly/period-slice stability and sample sizes before any attempt to convert the aggregate difference into a hypothesis;
 3. keep ICT kill zones separate until their own official-source boundaries are extracted and frozen;
 4. continue authoritative framework source extraction and operationalization independently;
 5. define POC/Value Area only after an authoritative source and exact algorithm are frozen;
