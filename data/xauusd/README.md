@@ -79,7 +79,31 @@ Tick BID reconstruction is exact for 550/551 M5 bars, 182/183 M15 bars and 44/45
 
 **Current qualification:** `UTC-TIMEBASE-VERIFIED; MULTI-TIMEFRAME-PRICE-QUALIFIED; TICK-RECONSTRUCTION-WITH-WARNINGS`.
 
-Named-session research is now eligible on this new bundle only after an explicit IANA-timezone/DST-aware session policy is frozen. UTC provenance does not itself define London, New York, Asia or ICT kill-zone boundaries.
+## Named major-hub session policy
+
+The canonical UTC dataset now has an explicit, separately validated context policy:
+
+- protocol: `docs/NAMED_SESSION_POLICY_PROTOCOL.md`
+- policy: `config/session-policies/xauusd-major-sessions.yaml`
+- engine: `research_core/session_policy.py`
+- validator: `tools/validate_named_sessions.py`
+- coverage audit: `data/reports/XAUUSD_o_UTC_20260904_052959.named-sessions.md`
+
+Research convention:
+
+- Asia/Tokyo — `Asia/Tokyo`, 09:00–18:00 local
+- London — `Europe/London`, 08:00–17:00 local
+- New York — `America/New_York`, 08:00–17:00 local
+
+DST is resolved from IANA timezone data, not fixed UTC offsets. Session start is inclusive and end is exclusive. Overlaps are preserved. These windows are **not** ICT kill zones and must not be substituted for methodology-specific session rules.
+
+Canonical M5 completeness audit:
+
+- Asia/Tokyo: 128 evaluable full windows; 12 complete, 116 incomplete, plus two coverage-edge instances
+- London: 129 evaluable; 128 complete, 1 incomplete
+- New York: 129 evaluable; 126 complete, 3 incomplete
+
+Missing bars do not move session boundaries. Holiday or early-close labels are not inferred from absence alone. Future session-conditioned backtests should default to `complete_only` unless the Strategy Specification explicitly selects another missing-data policy.
 
 ## Operational TPO real-data smoke test
 
@@ -87,11 +111,11 @@ The first operational framework engine applied to real XAUUSD data is `amt_tpo_p
 
 - engine: `research_core/tpo_profile.py`
 - adapter: `research_core/tpo_dataset_adapter.py`
-- session policy: `config/session-policies/source-calendar-day.yaml`
+- neutral session policy: `config/session-policies/source-calendar-day.yaml`
 - CLI: `tools/run_source_day_tpo.py`
 - report: `data/reports/XAUUSD_o_M5_20260903.source-day-tpo.md`
 
-The existing smoke test uses the older source-local bundle and remains a technical source-calendar-date grouping only. It proves deterministic engine execution, not named-session semantics. A new named-session application must use the canonical UTC dataset and a separately validated session policy.
+The existing smoke test uses the older source-local bundle and remains a technical source-calendar-date grouping only. It proves deterministic engine execution, not named-session semantics. The next TPO application should use the canonical UTC bundle, the named-session policy and explicit per-session completeness flags.
 
 ## Validation checklist
 
@@ -104,6 +128,7 @@ The existing smoke test uses the older source-local bundle and remains a technic
 - closed vs forming bars
 - gaps and duplicates
 - session boundaries
+- session completeness
 - resampling method
 - transaction-cost assumptions
 
