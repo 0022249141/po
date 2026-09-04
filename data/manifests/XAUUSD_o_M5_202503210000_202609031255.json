@@ -1,0 +1,48 @@
+{
+  "dataset_id": "xauusd_o_m5_202503210000_202609031255",
+  "market": "xauusd",
+  "symbol": "XAUUSD_o",
+  "source_id": "user_mt5_export",
+  "data_type": "ohlc",
+  "timeframe": "M5",
+  "timezone": "source-local (unresolved)",
+  "normalization_timezone": null,
+  "start_timestamp": "2025-03-21T00:00:00",
+  "end_timestamp": "2026-09-03T12:55:00",
+  "analysis_cutoff": null,
+  "forming_bar_policy": "Final 2026-09-03 12:55 source-local bar is not accepted as closed until the exact export cutoff is known to be >= 13:00 source-local; exclude it from close-confirmation logic otherwise.",
+  "file_path": "external-library://XAUUSD_o_M5_202503210000_202609031255.csv",
+  "sha256": "85432bdef0ce863df9522a93d473481b2869d6a8c7df96b2977c94c58c59cdd2",
+  "rows": 103037,
+  "created_at": "2026-09-04",
+  "storage_policy": "Metadata and validation report are committed; the 6.37 MB source CSV remains external and is not duplicated into the repository.",
+  "observed_columns": ["<DATE>", "<TIME>", "<OPEN>", "<HIGH>", "<LOW>", "<CLOSE>", "<TICKVOL>", "<VOL>", "<SPREAD>"],
+  "observed_data_notes": {
+    "duplicate_timestamps": 0,
+    "out_of_order_timestamps": 0,
+    "ohlc_integrity_errors": 0,
+    "interval_gaps_over_7_5_minutes": 384,
+    "common_session_breaks_65_minutes": 289,
+    "common_weekend_gaps_2d_1h_10m": 61,
+    "ten_minute_gaps": 7,
+    "volume_column_all_zero": true,
+    "tick_volume_present": true,
+    "spread_min_points": 4,
+    "spread_median_points": 8,
+    "spread_max_points": 301,
+    "final_bar_tick_volume": 80
+  },
+  "validation": {
+    "status": "pass_with_warnings",
+    "errors": 0,
+    "warnings": 384,
+    "validator": "2026-09-04 ingest audit using research_core-compatible OHLC/timestamp rules"
+  },
+  "evidence_boundary": [
+    "Broker/feed identity is not established by the filename alone.",
+    "Timezone is not inferred from filename or row timestamps.",
+    "VOL=0 is not treated as real exchange volume.",
+    "Gaps are reported, not automatically filled; session/calendar classification must precede imputation.",
+    "The final bar may be forming because the filename terminates at the same 12:55 timestamp as the last M5 row."
+  ]
+}
