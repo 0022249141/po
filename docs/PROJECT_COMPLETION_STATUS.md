@@ -11,11 +11,11 @@ Framework ingestion and operationalization governance are active under `docs/FRA
 
 The first operational rule remains `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
 
-The XAUUSD timebase blocker has been removed for the new canonical UTC bundle `xauusd_o_utc_20260904_052959`. The export run directly binds UTC timestamp semantics, LiteFinance broker/server identity, terminal metadata, symbol specification, cutoff and per-file SHA-256 values. This does **not** retroactively verify the older source-local bundle.
+The XAUUSD timebase blocker has been removed for the canonical UTC bundle `xauusd_o_utc_20260904_052959`. The export run directly binds UTC timestamp semantics, LiteFinance broker/server identity, terminal metadata, symbol specification, cutoff and per-file SHA-256 values. This does **not** retroactively verify the older source-local bundle.
 
-A named-session context layer is operational under `docs/NAMED_SESSION_POLICY_PROTOCOL.md`, `config/session-policies/xauusd-major-sessions.yaml`, and `research_core/session_policy.py`. The downstream dataset-selection layer is also operational under `docs/NAMED_SESSION_DATASET_PROTOCOL.md` and `research_core/named_session_dataset.py`, with explicit `complete_only`, `allow_incomplete_with_flag`, and coverage-edge handling. These research sessions remain separate from ICT kill zones and strategy logic.
+A named-session context layer is operational under `docs/NAMED_SESSION_POLICY_PROTOCOL.md`, `config/session-policies/xauusd-major-sessions.yaml`, and `research_core/session_policy.py`. The downstream dataset-selection layer is operational under `docs/NAMED_SESSION_DATASET_PROTOCOL.md` and `research_core/named_session_dataset.py`, with explicit `complete_only`, `allow_incomplete_with_flag`, and coverage-edge handling. These research sessions remain separate from ICT kill zones and strategy logic.
 
-The first frozen downstream study is `xauusd_named_session_tpo_descriptive_v1` in `quant/studies/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.yaml`. Its canonical external-data execution has now been completed and compactly recorded in `quant/results/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.result.yaml`, with a human-readable result report under `data/reports/XAUUSD_o_UTC_20260904_052959.named-session-tpo-study-v1.md`. A dedicated result validator prevents the compact record from drifting away from the frozen study specification.
+The first frozen downstream study, `xauusd_named_session_tpo_descriptive_v1`, has been executed and recorded. Its declared post-result temporal follow-up, `xauusd_named_session_tpo_temporal_robustness_v1`, has also been executed and compactly recorded. Across all six eligible calendar-month buckets from March through August 2026, both pre-selected directional features — median session range and median TPO occupancy-event count — retain the same New-York-greater-than-London ordering. This is descriptive temporal persistence only; statistical significance, causality, regime robustness, trading edge and profitability remain unestablished.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -41,6 +41,8 @@ The repository is **not historically complete** because several pre-existing art
 | Descriptive study specification gate | COMPLETE validator + CI gate | FIRST FROZEN SPEC registered for named-session TPO |
 | Descriptive study result gate | COMPLETE validator + CI gate | FIRST COMPACT RESULT recorded and internally bound to frozen spec |
 | Named-session TPO aggregate study | COMPLETE runner | EXECUTED on canonical external M5; descriptive result recorded |
+| Temporal robustness specification gate | COMPLETE validator + CI gate | FROZEN post-result monthly follow-up registered |
+| Temporal robustness result gate | COMPLETE validator + CI gate | EXECUTED; 6/6 eligible months match base direction for both primary features |
 | MTF qualification engine | COMPLETE | VERIFIED on legacy and canonical H1/M15/M5 bundles |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
 | Quant research workflow | COMPLETE | STRATEGY-DEPENDENT |
@@ -151,9 +153,39 @@ Primary aggregate medians:
 - London mean-bin-occupancy: `10.2916`; New York: `10.3821`;
 - both primary sessions contain 108 closed M5 bars per complete session.
 
-Therefore New York has the larger aggregate median range and total occupancy-event count in this dataset, while median occupancy density per occupied bin is nearly the same. The study intentionally performs no statistical-significance test and does not establish persistence, causality, prediction, trading edge or profitability.
+Therefore New York has the larger aggregate median range and total occupancy-event count in this dataset, while median occupancy density per occupied bin is nearly the same. The study intentionally performs no statistical-significance test and does not establish causality, prediction, trading edge or profitability.
 
-The compact result is now governed by `research_core/study_result_validation.py` and `tools/validate_study_results.py`; the validator checks binding to the frozen spec, sample-count consistency, primary eligibility and recomputes the recorded median differences/ratios from the recorded session medians.
+The compact result is governed by `research_core/study_result_validation.py` and `tools/validate_study_results.py`; the validator checks binding to the frozen spec, sample-count consistency, primary eligibility and recomputes the recorded median differences/ratios from the recorded session medians.
+
+## Recorded temporal robustness milestone
+
+Frozen specification: `quant/studies/XAUUSD_NAMED_SESSION_TPO_TEMPORAL_ROBUSTNESS_V1.yaml`.  
+Compact result: `quant/results/XAUUSD_NAMED_SESSION_TPO_TEMPORAL_ROBUSTNESS_V1.result.yaml`.  
+Report: `data/reports/XAUUSD_o_UTC_20260904_052959.temporal-robustness-v1.md`.
+
+This study is explicitly recorded as a post-result follow-up to the aggregate V1 result. It keeps the same canonical dataset, M5 timeframe, cutoff, named-session policy, `complete_only` selection, TPO operational rule and feature definitions. It buckets by session-local calendar month and requires at least 10 complete London and 10 complete New York sessions for a bucket to enter persistence scoring.
+
+Eligible months and sample counts:
+
+- March 2026: `17 / 17`
+- April 2026: `21 / 21`
+- May 2026: `21 / 21`
+- June 2026: `22 / 21`
+- July 2026: `23 / 22`
+- August 2026: `21 / 21`
+
+September has only `3 / 3` complete sessions and is excluded from persistence scoring.
+
+For both pre-selected directional features, `range_ticks` and `occupancy_events`, all six eligible months reproduce the base direction `new_york_gt_london`. Therefore:
+
+- eligible bucket count: `6`
+- matching range-direction buckets: `6 / 6`
+- matching occupancy-event-direction buckets: `6 / 6`
+- matching fraction for both features: `1.0`
+
+This establishes descriptive time-slice persistence inside the current dataset. It does **not** establish statistical significance, causality, predictive value, trading edge, profitability or robustness to a separately defined volatility/macro regime.
+
+The compact temporal result is governed by `research_core/temporal_result_validation.py` and `tools/validate_temporal_results.py`. The validator recomputes bucket eligibility, median differences, directions and directional-persistence fractions from the compact monthly records and checks binding to the frozen follow-up specification and validated base result.
 
 ## Legacy source-local bundle boundary
 
@@ -172,7 +204,7 @@ The implementation enforces closed bars only, forming-bar no-op behavior, extern
 - AMT acceptance/rejection remains blocked until measurement window, threshold and confirmation rules are source-frozen.
 - Named-session context and dataset construction are operational, but methodology-specific ICT kill zones remain separate and source-extraction work is still required.
 - TPO remains descriptive; POC/Value Area and any trading interpretation require separately sourced/frozen operational rules.
-- The aggregate London/New York descriptive difference is not yet time/regime-robustness qualified.
+- The aggregate London/New York difference is temporally persistent across six eligible monthly slices but is not yet qualified under a separately frozen volatility/macro regime definition.
 - Long-history transaction-cost backtesting still requires a frozen historical spread/slippage/fill model; two-day BID/ASK ticks do not by themselves qualify 180 days of execution costs.
 
 ## Hard blockers that cannot be solved by inference
@@ -193,8 +225,8 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 ## Current next workstream
 
-1. freeze and execute a temporal/regime robustness study for the same London/New York descriptive features without changing V1 definitions;
-2. report monthly/period-slice stability and sample sizes before any attempt to convert the aggregate difference into a hypothesis;
+1. freeze a separate regime-robustness specification before inspecting any regime-conditioned result;
+2. choose only observable, provenance-bound regime inputs and define thresholds before execution — no after-the-fact labels;
 3. keep ICT kill zones separate until their own official-source boundaries are extracted and frozen;
 4. continue authoritative framework source extraction and operationalization independently;
 5. define POC/Value Area only after an authoritative source and exact algorithm are frozen;
