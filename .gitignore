@@ -31,6 +31,9 @@ package-lock.json
 data/raw/
 data/**/raw/
 
+# Canonical MT5 UTC export bundles stay local/external until reviewed
+MT5_UTC_EXPORTS/
+
 # CSV can be large; commit only explicit samples when approved
 *.csv
 !data/samples/*.csv
