@@ -27,5 +27,7 @@ jobs:
         run: python tools/validate_operationalization.py
       - name: Validate timebase registry
         run: python tools/validate_timebase.py
+      - name: Validate named session policy
+        run: python tools/validate_named_sessions.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
