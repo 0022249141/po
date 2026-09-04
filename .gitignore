@@ -1,8 +1,34 @@
-node_modules/
+# Local/runtime artifacts
 .env
 .env.*
-!.env.example
 __pycache__/
 *.pyc
 *.log
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.venv/
+venv/
+node_modules/
+
+# Local data/cache outputs (keep repository metadata and schemas)
+data/raw/
+data/cache/
+data/tmp/
+*.parquet
+*.feather
+*.db
+*.sqlite
+*.sqlite3
+*.zip
+
+# Secrets / credentials
+*.key
+*.pem
+credentials*.json
+secrets*.json
+
+# Generated test/backtest outputs
+outputs/
+reports/generated/
