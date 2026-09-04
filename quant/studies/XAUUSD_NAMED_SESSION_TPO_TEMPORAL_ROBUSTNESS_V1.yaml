@@ -1,0 +1,134 @@
+version: 1
+study_id: xauusd_named_session_tpo_temporal_robustness_v1
+status: frozen
+study_type: descriptive
+owner: project
+frozen_at_utc: "2026-09-04T07:10:00Z"
+
+research_question: >-
+  As a post-result robustness follow-up to xauusd_named_session_tpo_descriptive_v1, does the
+  observed London-versus-New-York descriptive ordering in session range and TPO occupancy-event
+  count persist across calendar-month buckets when the base dataset, named-session policy,
+  complete-only selection, TPO rule, feature definitions, and cutoff remain unchanged?
+
+data:
+  market: XAUUSD
+  symbol: XAUUSD_o
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  input_timebase: verified_utc
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  closed_bars_only: true
+
+session_context:
+  policy_id: xauusd_major_fx_sessions_v1
+  policy_path: config/session-policies/xauusd-major-sessions.yaml
+  sessions:
+    - london
+    - new_york
+  selection:
+    completeness_mode: complete_only
+    exclude_coverage_edges: true
+
+operational_input:
+  rule_id: amt_tpo_profile_core_v1
+  rule_path: quant/operational/AMT_TPO_PROFILE_CORE.yaml
+  price_increment: "0.01"
+
+features:
+  - range_ticks
+  - occupied_bins
+  - occupancy_events
+  - mean_bin_occupancy
+  - bars_seen
+
+feature_definitions:
+  range_ticks: observed_session_high_tick - observed_session_low_tick
+  occupied_bins: count of TPO bins with occupancy greater than zero
+  occupancy_events: sum of all TPO bin occupancy counts
+  mean_bin_occupancy: occupancy_events / occupied_bins
+  bars_seen: number of closed bars admitted to the session profile
+
+summary_statistics:
+  - n
+  - min
+  - q25
+  - median
+  - q75
+  - max
+  - mean
+
+sample_policy:
+  primary_sessions:
+    - london
+    - new_york
+  secondary_descriptive_sessions: []
+  minimum_primary_n: 30
+  underpowered_action: descriptive_only
+
+comparison_policy:
+  pairwise_primary_only: true
+  primary_pair:
+    - london
+    - new_york
+  pairwise_outputs:
+    - median_difference
+    - median_ratio
+  no_parameter_tuning_after_results: true
+  no_hypothesis_rewrite_after_results: true
+  statistical_significance_test: none
+
+causality_policy:
+  forming_bars_prohibited: true
+  future_data_prohibited: true
+  session_boundary_inference_prohibited: true
+  missing_data_boundary_shift_prohibited: true
+
+interpretation_boundaries:
+  descriptive_only: true
+  trading_signal_prohibited: true
+  profitability_claim_prohibited: true
+  poc_value_area_prohibited: true
+  ict_kill_zone_substitution_prohibited: true
+  centralized_volume_claim_prohibited: true
+  dealer_inventory_claim_prohibited: true
+
+change_control:
+  frozen_spec_is_immutable: true
+  any_rule_change_requires_new_version: true
+
+follow_up_design:
+  follow_up_after_base_result: true
+  base_study_id: xauusd_named_session_tpo_descriptive_v1
+  base_spec_path: quant/studies/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.yaml
+  base_result_path: quant/results/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.result.yaml
+  base_observed_direction_reference:
+    range_ticks: new_york_gt_london
+    occupancy_events: new_york_gt_london
+  note: >-
+    This robustness study was frozen after the base aggregate result was observed. It is therefore
+    a declared follow-up, not a pre-result hypothesis for the original study.
+
+temporal_robustness:
+  bucket_basis: session_local_start_month
+  bucket_key_source: session_instance_id
+  bucket_format: YYYY-MM
+  minimum_pair_n_per_bucket: 10
+  directional_features:
+    - range_ticks
+    - occupancy_events
+  descriptive_context_features:
+    - occupied_bins
+    - mean_bin_occupancy
+    - bars_seen
+  eligible_bucket_rule: both primary sessions meet minimum_pair_n_per_bucket
+  persistence_outputs:
+    - eligible_bucket_count
+    - matching_direction_bucket_count
+    - matching_direction_fraction
+  statistical_significance_test: none
+  regime_labels: none
+  reason_regime_labels_omitted: >-
+    No volatility/macro regime definition is introduced in this version because doing so would
+    add a new conditioning rule. Regime analysis requires a separately frozen specification.
