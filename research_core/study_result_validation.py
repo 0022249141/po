@@ -219,9 +219,9 @@ def validate_repository_study_results(repo_root: str | Path = ".") -> StudyResul
     if not result_dir.exists():
         return StudyResultValidationResult([f"missing: {result_dir}"], [])
 
-    paths = sorted(result_dir.glob("*.yaml"))
+    paths = sorted(result_dir.glob("*DESCRIPTIVE*.result.yaml"))
     if not paths:
-        return StudyResultValidationResult(["no study result YAML files found"], [])
+        return StudyResultValidationResult(["no descriptive study result YAML files found"], [])
 
     errors: list[str] = []
     warnings: list[str] = []
