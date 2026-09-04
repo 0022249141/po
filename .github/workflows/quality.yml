@@ -45,5 +45,9 @@ jobs:
         run: python tools/validate_strategy_specs.py
       - name: Validate signal evaluation specifications
         run: python tools/validate_signal_evaluation.py
+      - name: Validate recorded gross signal results
+        run: python tools/validate_signal_results.py
+      - name: Validate spread sensitivity specifications
+        run: python tools/validate_spread_sensitivity.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
