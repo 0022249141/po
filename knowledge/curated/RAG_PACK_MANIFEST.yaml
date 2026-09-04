@@ -1,0 +1,25 @@
+pack_version: 1
+purpose: compact_retrieval_for_chatgpt
+canonical_map: docs/resource-connector-map.md
+
+priority_order:
+  - path: knowledge/curated/PROJECT_CONTEXT.generated.md
+    role: operating_rules_and_evidence_hierarchy
+  - path: knowledge/curated/glossary.generated.md
+    role: project_vocabulary
+  - path: knowledge/curated/MARKET_PARAMS.generated.md
+    role: market_configuration_contract
+  - path: knowledge/curated/CROSS_FRAMEWORK_BOUNDARIES.md
+    role: framework_isolation_and_crosswalk_policy
+  - path: config/source-registry.yaml
+    role: source_identity_and_allowed_role
+  - path: docs/SOURCE_POLICY.md
+    role: provenance_and_source_governance
+  - path: docs/QUANT_PROTOCOL.md
+    role: research_and_backtesting_protocol
+
+rules:
+  raw_source_dump_is_primary_retrieval: false
+  generated_files_must_remain_labelled: true
+  historical_missing_assets_are_not_reconstructed: true
+  current_user_data_overrides_stale_retrieval_context: true
