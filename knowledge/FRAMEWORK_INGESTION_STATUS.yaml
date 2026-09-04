@@ -61,8 +61,10 @@ frameworks:
       - dalton_mind_over_markets
       - dalton_markets_in_profile
       - cme_market_profile_education
-    status: source_indexed
+    status: source_verified_partial
     independent_definition_required: true
+    verified_artifacts:
+      - source-notes/cme-dalton-market-profile-verified.md
     named_concepts:
       - Value Area
       - POC
