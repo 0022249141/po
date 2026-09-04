@@ -29,5 +29,7 @@ jobs:
         run: python tools/validate_timebase.py
       - name: Validate named session policy
         run: python tools/validate_named_sessions.py
+      - name: Validate descriptive study specifications
+        run: python tools/validate_study_specs.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
