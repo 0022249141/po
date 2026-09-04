@@ -1,0 +1,77 @@
+version: 1
+result_id: xauusd_ny_preopen_range_breakout_baseline_v1_spread_result_20260904
+sensitivity_id: xauusd_ny_preopen_range_breakout_baseline_v1_spread_sensitivity
+strategy_spec_id: xauusd_ny_preopen_range_breakout_baseline_v1
+status: recorded
+result_type: compact_spread_sensitivity_result
+recorded_at_utc: "2026-09-04T09:35:00Z"
+
+provenance:
+  execution_environment: user_local_windows
+  execution_command: >-
+    py tools/run_spread_sensitivity.py
+    .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\strategy_signal_backtest_v1.json
+    --output .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\spread_sensitivity_v1.json
+  raw_result_path_external: MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\spread_sensitivity_v1.json
+  raw_result_committed: false
+  source_note: >-
+    Compact project record transcribed from the user-reported successful local execution output.
+    The complete sensitivity JSON remains external with the canonical MT5 UTC bundle.
+
+binding:
+  sensitivity_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.spread_sensitivity.yaml
+  gross_result_path: quant/results/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.gross.result.yaml
+  dataset_id: xauusd_o_utc_20260904_052959
+  symbol: XAUUSD_o
+  point_size: 0.01
+  trade_count: 101
+  primary_scenario: observed_median_fixed
+
+scenarios:
+  observed_min_fixed:
+    spread_points: 12.0
+    expectancy_R: 0.06708448781315213
+    profit_factor: 1.1695405692188736
+    max_drawdown_R: 5.872140858853297
+    positive_months: 6
+    eligible_months: 7
+  observed_median_fixed:
+    spread_points: 22.0
+    expectancy_R: 0.06421976072704447
+    profit_factor: 1.161687149096676
+    max_drawdown_R: 5.885434023934299
+    positive_months: 6
+    eligible_months: 7
+  observed_max_fixed:
+    spread_points: 151.0
+    expectancy_R: 0.027264781316255465
+    profit_factor: 1.065356239757889
+    max_drawdown_R: 6.150916458820606
+    positive_months: 4
+    eligible_months: 7
+
+primary_gate:
+  scenario_id: observed_median_fixed
+  passed: true
+  checks:
+    expectancy_R_positive: true
+    profit_factor_above_one: true
+  failure_action_if_failed: do_not_tune_signal_rules
+
+interpretation_boundaries:
+  fixed_spread_sensitivity_only: true
+  historical_full_sample_spread_not_calibrated: true
+  not_full_bid_ask_execution_backtest: true
+  commission_unresolved: true
+  slippage_unresolved: true
+  net_profitability_not_established: true
+  live_trading_prohibited: true
+  signal_rule_changes_prohibited: true
+
+verdict: >-
+  SPREAD SENSITIVITY V1 PASSED ITS PRE-FROZEN PRIMARY GATE. Under the observed-median fixed-spread
+  deduction of 22 points, expectancy remained positive at 0.06421976072704447 R and profit factor
+  remained above one at 1.161687149096676 across 101 trades, with 6 of 7 eligible months positive.
+  Even the observed-maximum 151-point stress deduction remained positive on expectancy and above one
+  on profit factor, but this remains a post-hoc fixed-spread sensitivity rather than a full historical
+  bid/ask, commission, and slippage execution backtest.
