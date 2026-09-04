@@ -1,0 +1,100 @@
+version: 1
+result_id: xauusd_named_session_tpo_regime_robustness_v1_result_20260904
+study_id: xauusd_named_session_tpo_regime_robustness_v1
+status: recorded
+result_type: compact_regime_robustness_result
+recorded_at_utc: "2026-09-04T07:40:00Z"
+
+provenance:
+  execution_environment: user_local_windows
+  execution_command: >-
+    py tools/run_named_session_tpo_regime_robustness.py
+    .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\XAUUSD_o_M5_bars_utc.csv
+    --output .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_regime_robustness_v1.json
+  summary_command: >-
+    py tools/summarize_regime_result.py
+    .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_regime_robustness_v1.json
+  raw_result_path_external: MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_regime_robustness_v1.json
+  raw_result_committed: false
+  source_note: >-
+    Compact project record transcribed from the user-reported successful local regime execution
+    and compact summarizer output. The raw JSON remains outside Git with the canonical MT5 UTC bundle.
+
+study_binding:
+  spec_path: quant/studies/XAUUSD_NAMED_SESSION_TPO_REGIME_ROBUSTNESS_V1.yaml
+  spec_status: frozen
+  declared_follow_up: true
+  base_study_id: xauusd_named_session_tpo_temporal_robustness_v1
+  base_result_path: quant/results/XAUUSD_NAMED_SESSION_TPO_TEMPORAL_ROBUSTNESS_V1.result.yaml
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  session_policy_id: xauusd_major_fx_sessions_v1
+  completeness_mode: complete_only
+  exclude_coverage_edges: true
+  operational_rule_id: amt_tpo_profile_core_v1
+  price_increment: "0.01"
+  regime_id: lagged_paired_range_rank_v1
+  lookback_paired_dates: 20
+  minimum_pair_n_per_regime: 10
+  statistical_significance_test: none
+
+sample_accounting:
+  paired_date_count: 126
+  warmup_excluded_paired_dates: 20
+  labeled_paired_date_count: 106
+  eligible_regime_count: 3
+  eligible_regimes:
+    - low
+    - normal
+    - high
+
+regime_buckets:
+  low:
+    eligible: true
+    london_n: 43
+    new_york_n: 43
+    range_ticks_direction: new_york_gt_london
+    occupancy_events_direction: new_york_gt_london
+  normal:
+    eligible: true
+    london_n: 30
+    new_york_n: 30
+    range_ticks_direction: new_york_gt_london
+    occupancy_events_direction: new_york_gt_london
+  high:
+    eligible: true
+    london_n: 33
+    new_york_n: 33
+    range_ticks_direction: new_york_gt_london
+    occupancy_events_direction: new_york_gt_london
+
+directional_persistence:
+  range_ticks:
+    base_direction: new_york_gt_london
+    eligible_regime_count: 3
+    matching_direction_regime_count: 3
+    matching_direction_fraction: 1.0
+  occupancy_events:
+    base_direction: new_york_gt_london
+    eligible_regime_count: 3
+    matching_direction_regime_count: 3
+    matching_direction_fraction: 1.0
+
+interpretation_boundaries:
+  descriptive_only: true
+  trading_signal_prohibited: true
+  profitability_claim_prohibited: true
+  statistical_significance_not_tested: true
+  causal_regime_labeling_only: true
+  regime_definition_is_project_defined: true
+  predictive_edge_not_established: true
+
+verdict: >-
+  REGIME ROBUSTNESS V1 RECORDED. All three pre-defined eligible causal lagged-range regimes
+  (low, normal, high) reproduce the previously observed New-York-greater-than-London direction
+  for both median session range and median TPO occupancy-event count. The 126 paired dates yield
+  106 labeled dates after the frozen 20-date warmup. This is descriptive regime persistence under
+  a project-defined causal conditioning rule, not statistical significance, predictive edge,
+  strategy profitability, or permission to trade.
