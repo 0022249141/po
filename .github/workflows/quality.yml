@@ -39,5 +39,7 @@ jobs:
         run: python tools/validate_temporal_results.py
       - name: Validate regime robustness specifications
         run: python tools/validate_regime_robustness.py
+      - name: Validate regime robustness results
+        run: python tools/validate_regime_results.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
