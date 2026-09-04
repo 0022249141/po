@@ -1,0 +1,111 @@
+version: 1
+candidate_id: amt_tpo_profile_core_v1
+concept_id: amt_market_profile_core
+framework: auction_market_theory
+readiness: candidate
+status: implementation_review
+
+source_boundary:
+  evidence_path: knowledge/04-auction-market-theory/source-notes/cme-dalton-market-profile-verified.md
+  definition_path: knowledge/04-auction-market-theory/definitions.md
+  interpretation_label: project_operational_interpretation
+  statement: >-
+    This candidate implements a deterministic time-at-price occupancy profile consistent with
+    the source-supported idea that Market Profile organizes price and time. It is not claimed to
+    be a canonical Dalton/CME POC, Value Area, initiative/responsive, or trading-entry formula.
+
+instrument_scope:
+  type: generic_price_series
+  initial_research_market: XAUUSD
+  constraint: no instrument-specific thresholds are embedded in this candidate
+
+input_data:
+  required:
+    - timestamp
+    - high
+    - low
+    - close_status
+    - session_id
+    - price_increment
+  optional:
+    - open
+    - close
+  prohibited_claims:
+    - centralized_volume_from_tick_volume
+    - dealer_inventory_from_ohlc
+
+timeframe_or_event_clock:
+  mode: closed_bar_event_clock
+  rule: update the profile exactly once when a bar becomes closed
+
+lookback:
+  mode: current_session_only
+  reset_condition: session_id changes
+
+reference_set:
+  definition: all closed bars with the same session_id observed up to and including the current decision timestamp
+
+state_variables:
+  - profile_bins
+  - tpo_count_per_price_bin
+  - observed_session_low
+  - observed_session_high
+  - bars_seen
+
+trigger:
+  event: closed_bar_arrival
+  action: increment every price bin intersecting the closed bar inclusive range [low, high] by one TPO unit
+
+confirmation:
+  rule: a bar contributes only after close_status == closed
+
+invalidation:
+  - source bar is later revised or removed
+  - session_id is missing
+  - price_increment is missing or non-positive
+  - timestamp ordering is violated and cannot be deterministically repaired from source provenance
+
+entry_timing: not_applicable
+exit_or_target: not_applicable
+
+forming_bar_policy:
+  rule: forming bars contribute zero TPO units and cannot change the profile
+
+timezone_or_session_dependency:
+  rule: session_id must be supplied by an external, provenance-tracked session policy; this candidate does not infer timezone or DST
+
+missing_data_policy:
+  rule: >-
+    If a missing-bar interval is detected inside a session, retain the observed profile but mark
+    that session profile incomplete; downstream signal/backtest logic must not treat it as fully qualified.
+
+tie_and_edge_case_policy:
+  price_bin_rule: >-
+    A price bin is indexed on an integer grid derived from price_increment. Both low and high
+    boundary bins are included. Floating-point prices must be normalized to integer ticks before binning.
+  equal_extremes: no special treatment; occupancy counts are deterministic
+  empty_session: invalid profile
+  one_bar_session: valid descriptive profile but not sufficient for any trading inference
+
+no_hindsight:
+  future_information_allowed: false
+  rule: only bars closed at or before the current decision timestamp are included
+
+not_in_scope:
+  - POC selection
+  - Value Area percentage or expansion algorithm
+  - initiative activity classification
+  - responsive activity classification
+  - entry or exit signal generation
+  - profitability claim
+
+promotion_requirements:
+  operational:
+    - implementation passes deterministic unit tests
+    - no lookahead findings
+    - session policy is supplied explicitly in each dataset manifest
+    - integer-tick binning is used
+  backtest_ready:
+    - downstream strategy specification explicitly states how this descriptive profile is used
+    - execution and cost model are frozen
+    - IS/OOS and robustness protocol is defined
