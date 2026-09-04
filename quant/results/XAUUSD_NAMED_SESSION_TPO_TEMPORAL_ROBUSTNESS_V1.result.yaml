@@ -1,0 +1,186 @@
+version: 1
+result_id: xauusd_named_session_tpo_temporal_robustness_v1_result_20260904
+study_id: xauusd_named_session_tpo_temporal_robustness_v1
+status: recorded
+result_type: compact_temporal_robustness_result
+recorded_at_utc: "2026-09-04T07:14:00Z"
+
+provenance:
+  execution_environment: user_local_windows
+  execution_command: >-
+    py tools/run_named_session_tpo_temporal_robustness.py
+    .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\XAUUSD_o_M5_bars_utc.csv
+    --output .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_temporal_robustness_v1.json
+  raw_result_path_external: MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_temporal_robustness_v1.json
+  raw_result_committed: false
+  source_note: >-
+    Compact project record transcribed from the user-reported successful local execution output.
+    The raw JSON remains outside Git with the canonical MT5 UTC bundle.
+
+study_binding:
+  spec_path: quant/studies/XAUUSD_NAMED_SESSION_TPO_TEMPORAL_ROBUSTNESS_V1.yaml
+  spec_status: frozen
+  declared_follow_up: true
+  base_study_id: xauusd_named_session_tpo_descriptive_v1
+  base_result_path: quant/results/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.result.yaml
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  session_policy_id: xauusd_major_fx_sessions_v1
+  completeness_mode: complete_only
+  exclude_coverage_edges: true
+  operational_rule_id: amt_tpo_profile_core_v1
+  price_increment: "0.01"
+  bucket_basis: session_local_start_month
+  minimum_pair_n_per_bucket: 10
+  statistical_significance_test: none
+  regime_labels: none
+
+aggregate_reference:
+  london_n: 128
+  new_york_n: 126
+  range_ticks:
+    london_median: 5455.5
+    new_york_median: 6261.5
+    direction: new_york_gt_london
+  occupancy_events:
+    london_median: 54008.0
+    new_york_median: 65066.0
+    direction: new_york_gt_london
+
+monthly_buckets:
+  "2026-03":
+    eligible: true
+    london_n: 17
+    new_york_n: 17
+    range_ticks:
+      london_median: 7357.0
+      new_york_median: 10103.0
+      median_difference_left_minus_right: -2746.0
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 89208.0
+      new_york_median: 97813.0
+      median_difference_left_minus_right: -8605.0
+      direction: new_york_gt_london
+  "2026-04":
+    eligible: true
+    london_n: 21
+    new_york_n: 21
+    range_ticks:
+      london_median: 5895.0
+      new_york_median: 7055.0
+      median_difference_left_minus_right: -1160.0
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 55983.0
+      new_york_median: 69766.0
+      median_difference_left_minus_right: -13783.0
+      direction: new_york_gt_london
+  "2026-05":
+    eligible: true
+    london_n: 21
+    new_york_n: 21
+    range_ticks:
+      london_median: 4678.0
+      new_york_median: 7050.0
+      median_difference_left_minus_right: -2372.0
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 55510.0
+      new_york_median: 66523.0
+      median_difference_left_minus_right: -11013.0
+      direction: new_york_gt_london
+  "2026-06":
+    eligible: true
+    london_n: 22
+    new_york_n: 21
+    range_ticks:
+      london_median: 5549.5
+      new_york_median: 6243.0
+      median_difference_left_minus_right: -693.5
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 54832.5
+      new_york_median: 61515.0
+      median_difference_left_minus_right: -6682.5
+      direction: new_york_gt_london
+  "2026-07":
+    eligible: true
+    london_n: 23
+    new_york_n: 22
+    range_ticks:
+      london_median: 4309.0
+      new_york_median: 5673.0
+      median_difference_left_minus_right: -1364.0
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 42102.0
+      new_york_median: 50824.5
+      median_difference_left_minus_right: -8722.5
+      direction: new_york_gt_london
+  "2026-08":
+    eligible: true
+    london_n: 21
+    new_york_n: 21
+    range_ticks:
+      london_median: 4320.0
+      new_york_median: 5406.0
+      median_difference_left_minus_right: -1086.0
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 46563.0
+      new_york_median: 61528.0
+      median_difference_left_minus_right: -14965.0
+      direction: new_york_gt_london
+  "2026-09":
+    eligible: false
+    london_n: 3
+    new_york_n: 3
+    range_ticks:
+      london_median: 7644.0
+      new_york_median: 9172.0
+      median_difference_left_minus_right: -1528.0
+      direction: new_york_gt_london
+    occupancy_events:
+      london_median: 56870.0
+      new_york_median: 64697.0
+      median_difference_left_minus_right: -7827.0
+      direction: new_york_gt_london
+
+persistence:
+  eligible_bucket_count: 6
+  eligible_buckets:
+    - "2026-03"
+    - "2026-04"
+    - "2026-05"
+    - "2026-06"
+    - "2026-07"
+    - "2026-08"
+  range_ticks:
+    base_direction: new_york_gt_london
+    matching_direction_bucket_count: 6
+    matching_direction_fraction: 1.0
+  occupancy_events:
+    base_direction: new_york_gt_london
+    matching_direction_bucket_count: 6
+    matching_direction_fraction: 1.0
+
+interpretation_boundaries:
+  descriptive_only: true
+  trading_signal_prohibited: true
+  profitability_claim_prohibited: true
+  poc_value_area_prohibited: true
+  ict_kill_zone_substitution_prohibited: true
+  centralized_volume_claim_prohibited: true
+  dealer_inventory_claim_prohibited: true
+  statistical_significance_not_tested: true
+  regime_conditioning_not_tested: true
+
+verdict: >-
+  TEMPORAL ROBUSTNESS V1 RECORDED. All six pre-defined eligible calendar-month buckets from
+  2026-03 through 2026-08 reproduce the base New-York-greater-than-London direction for both
+  median session range and median TPO occupancy-event count. September is underpowered at 3/3
+  sessions and is excluded from persistence scoring. This is descriptive temporal persistence,
+  not statistical significance, causality, predictive edge, profitability, or regime robustness.
