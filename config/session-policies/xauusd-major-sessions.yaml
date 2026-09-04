@@ -1,0 +1,63 @@
+version: 1
+policy_id: xauusd_major_fx_sessions_v1
+status: operational_context_policy
+market: XAUUSD
+input_timebase_requirement: verified_utc
+
+source_boundary:
+  interpretation_label: research_session_convention
+  statement: >-
+    These windows are explicit research conventions for the major FX trading hubs, derived from
+    broker-education references. They are not exchange trading hours, not broker maintenance hours,
+    and not ICT kill zones. Strategy logic must reference a separate policy when a methodology uses
+    different session or kill-zone boundaries.
+  references:
+    - source_id: oanda_major_fx_sessions
+      url: https://www.oanda.com/us-en/skills-and-insights/education/trading-asset-classes/forex/when-is-the-best-time-for-forex-trading/
+      role: primary_broker_education_reference
+    - source_id: forexcom_market_hours
+      url: https://www.forex.com/en-us/trading-guides/forex-market-hours/
+      role: crosscheck_reference
+
+membership_semantics:
+  timestamp_field: bar_open_utc
+  boundary: start_inclusive_end_exclusive
+  local_weekday_basis: session_start_local_date
+  overlap_allowed: true
+  session_instance_id: "<session_id>:<local-calendar-date>"
+
+sessions:
+  asia_tokyo:
+    display_name: Asia / Tokyo
+    timezone: Asia/Tokyo
+    start_local: "09:00"
+    end_local: "18:00"
+    weekdays: [0, 1, 2, 3, 4]
+    note: Tokyo-local convention; Japan does not currently observe DST, but IANA timezone data remains authoritative.
+
+  london:
+    display_name: London
+    timezone: Europe/London
+    start_local: "08:00"
+    end_local: "17:00"
+    weekdays: [0, 1, 2, 3, 4]
+    note: UTC boundaries move automatically with Europe/London DST rules.
+
+  new_york:
+    display_name: New York
+    timezone: America/New_York
+    start_local: "08:00"
+    end_local: "17:00"
+    weekdays: [0, 1, 2, 3, 4]
+    note: UTC boundaries move automatically with America/New_York DST rules.
+
+rules:
+  iana_timezone_required: true
+  dst_from_timezone_database: true
+  fixed_utc_offsets_prohibited: true
+  verified_utc_input_required: true
+  start_inclusive: true
+  end_exclusive: true
+  holiday_inference_prohibited: true
+  missing_market_data_does_not_shift_session_boundaries: true
+  not_ict_kill_zones: true
