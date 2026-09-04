@@ -76,15 +76,26 @@ assessments:
     candidate_spec_path: null
 
   amt_market_profile_core:
-    concept_state: defined
-    readiness: blocked
-    machine_ready: false
+    concept_state: operational_candidate
+    readiness: candidate
+    machine_ready: true
     target_role: context_model
-    blockers:
-      - exact profile construction method is not source-frozen
-      - session boundary, timezone, and DST policy are unresolved for the qualified XAUUSD bundle
-      - POC and Value Area algorithms are not yet canonical project rules
-    candidate_spec_path: null
+    blockers: []
+    candidate_spec_path: quant/candidates/AMT_TPO_PROFILE_CORE.yaml
+    instrument_scope: generic price series; initial research market XAUUSD; no instrument-specific thresholds embedded
+    input_data: closed OHLC bars plus externally supplied session_id and positive price_increment
+    timeframe_or_event_clock: closed-bar event clock; update exactly once when each bar closes
+    lookback: current session only, reset when session_id changes
+    reference_set: all closed bars in the current session observed up to and including the current decision timestamp
+    state_variables: profile bins, TPO count per price bin, observed session low/high, bars seen
+    trigger: on each closed bar, increment every integer price bin intersecting the inclusive bar range [low, high] by one TPO unit
+    confirmation: bar contributes only after it is closed
+    invalidation: missing session_id or invalid price_increment or irreparable timestamp ordering or later source revision
+    forming_bar_policy: forming bars contribute zero TPO units
+    timezone_or_session_dependency: session_id must come from an external provenance-tracked session policy; timezone/DST is never inferred by this candidate
+    missing_data_policy: preserve observed profile but mark the session incomplete when an intra-session data gap is detected; downstream fully-qualified logic must reject incomplete profiles
+    tie_and_edge_case_policy: normalize prices to integer ticks; include low/high boundary bins; deterministic occupancy counts; empty sessions invalid; one-bar sessions descriptive only
+    measurable_proxy: not_applicable; this is a descriptive time-at-price context model rather than a latent dealer variable
 
   amt_price_acceptance_rejection:
     concept_state: defined
