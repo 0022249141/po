@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 
 UTC = timezone.utc
@@ -38,6 +38,45 @@ def sha256_file(path: str | Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def gold_symbol_candidates(names: Iterable[str]) -> list[str]:
+    """Return deterministic XAUUSD/GOLD-like symbol names for operator guidance only."""
+    unique = {str(name).strip() for name in names if str(name).strip()}
+
+    def score(name: str) -> tuple[int, str]:
+        upper = name.upper()
+        if upper == "XAUUSD":
+            rank = 0
+        elif upper.startswith("XAUUSD"):
+            rank = 1
+        elif "XAUUSD" in upper:
+            rank = 2
+        elif upper == "GOLD":
+            rank = 3
+        elif upper.startswith("GOLD"):
+            rank = 4
+        elif "GOLD" in upper:
+            rank = 5
+        else:
+            rank = 99
+        return rank, name
+
+    return [name for name in sorted(unique, key=score) if score(name)[0] < 99]
+
+
+def _manifest_identity(manifest: dict[str, Any]) -> dict[str, Any]:
+    broker = manifest.get("broker") if isinstance(manifest.get("broker"), dict) else {}
+    symbol = manifest.get("symbol") if isinstance(manifest.get("symbol"), dict) else {}
+    files = manifest.get("files") if isinstance(manifest.get("files"), list) else []
+    return {
+        "export_time_utc": manifest.get("export_time_utc"),
+        "timestamp_semantics": manifest.get("timestamp_semantics"),
+        "broker_company": broker.get("company"),
+        "broker_server": broker.get("server"),
+        "symbol": symbol.get("name"),
+        "file_count": len(files),
+    }
 
 
 def validate_utc_bundle_manifest(manifest: dict[str, Any], base_dir: str | Path) -> dict[str, Any]:
@@ -94,4 +133,9 @@ def validate_utc_bundle_manifest(manifest: dict[str, Any], base_dir: str | Path)
         errors.append("canonical UTC export must not retroactively verify legacy source-local bundles")
 
     status = "fail" if errors else ("pass_with_warnings" if warnings else "pass")
-    return {"status": status, "errors": errors, "warnings": warnings}
+    return {
+        "status": status,
+        "identity": _manifest_identity(manifest),
+        "errors": errors,
+        "warnings": warnings,
+    }
