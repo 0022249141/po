@@ -1,51 +1,13 @@
-# Connectors / ChatGPT Integration
+# Connectors / Integration Layer
 
-The canonical map names three practical integration paths:
+This directory documents how external systems may feed the research repository. **There is no MCP server and no order-execution bridge in this repo.**
 
-1. **Knowledge Files**
-2. **GitHub connector**
-3. **Google Drive connector**
+See `INTEGRATION_MATRIX.md`.
 
-This repository intentionally contains **no MCP server** after the architecture reset.
+Principles:
 
-## Retrieval strategy
-
-Prefer compact curated artifacts over a raw dump of source PDFs. The canonical map specifically names:
-
-- `glossary.md`
-- `SKILL.md`
-- `MARKET_PARAMS.md`
-
-These files are expected inputs, not generated placeholders. Their real versions must be recovered before they are used for retrieval.
-
-## GitHub role
-
-GitHub is the version-controlled source for:
-
-- canonical source map
-- provenance registry
-- normalized knowledge notes
-- strategy specifications
-- code/backtest artifacts
-- validation reports
-
-A connector should retrieve from these versioned artifacts rather than silently altering them.
-
-## Google Drive role
-
-Drive is suitable for the translated PDF collection or other larger user-owned documents when storing all of them directly in Git is undesirable.
-
-## Knowledge-file policy
-
-A curated file should be:
-
-- small enough for reliable retrieval
-- terminology-consistent
-- source-linked
-- explicit about subjective vs operational definitions
-- versioned
-- free from unsupported confidence/profitability claims
-
-## Boundary
-
-Integration is a transport/retrieval layer. It must not change source definitions, market parameters or Strategy Specification rules.
+- GitHub is the versioned project source.
+- Large/raw source collections may live outside Git and be referenced by provenance.
+- ChatGPT consumes curated artifacts and current user-supplied data; it must not redefine project rules.
+- MT5/TradingView/Dukascopy/TGJU/macro sources have distinct roles and are not assumed interchangeable.
+- No connector implies permission to place or modify trades.

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Macro Event Row",
+  "type": "object",
+  "required": ["timestamp", "event", "source_id"],
+  "properties": {
+    "timestamp": {"type": "string"},
+    "event": {"type": "string"},
+    "currency": {"type": ["string", "null"]},
+    "importance": {"type": ["string", "integer", "null"]},
+    "actual": {},
+    "forecast": {},
+    "previous": {},
+    "source_id": {"type": "string"}
+  },
+  "additionalProperties": true
+}

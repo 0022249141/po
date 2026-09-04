@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tick Row",
+  "type": "object",
+  "required": ["timestamp", "bid", "ask"],
+  "properties": {
+    "timestamp": {"type": "string"},
+    "bid": {"type": "number"},
+    "ask": {"type": "number"},
+    "last": {"type": ["number", "null"]},
+    "volume": {"type": ["number", "null"]},
+    "flags": {"type": ["integer", "string", "null"]}
+  },
+  "additionalProperties": true
+}

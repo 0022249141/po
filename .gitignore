@@ -1,34 +1,46 @@
-# Local/runtime artifacts
-.env
-.env.*
+# Python
 __pycache__/
-*.pyc
-*.log
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .venv/
 venv/
-node_modules/
 
-# Local data/cache outputs (keep repository metadata and schemas)
-data/raw/
-data/cache/
-data/tmp/
+# Secrets / local configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Node remnants are not part of this project
+node_modules/
+package-lock.json
+
+# Large/raw market and source files: keep manifests/curated notes in Git
+*.zip
+*.7z
 *.parquet
 *.feather
 *.db
 *.sqlite
 *.sqlite3
-*.zip
+*.pdf
 
-# Secrets / credentials
-*.key
-*.pem
-credentials*.json
-secrets*.json
+data/raw/
+data/**/raw/
 
-# Generated test/backtest outputs
-outputs/
-reports/generated/
+# CSV can be large; commit only explicit samples when approved
+*.csv
+!data/samples/*.csv
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Reports generated locally
+reports/
+artifacts/

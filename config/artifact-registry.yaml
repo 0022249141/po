@@ -1,0 +1,71 @@
+version: 1
+canonical_map: docs/resource-connector-map.md
+
+artifacts:
+  - id: historical_glossary
+    canonical_name: glossary.md
+    status: missing
+    generated_equivalent: knowledge/curated/glossary.generated.md
+
+  - id: historical_skill
+    canonical_name: SKILL.md
+    status: missing
+    canonical_description: "current 6-layer + verdict version"
+    generated_equivalent: knowledge/curated/SKILL.generated.md
+
+  - id: historical_market_params
+    canonical_name: MARKET_PARAMS.md
+    status: missing
+    generated_equivalent: knowledge/curated/MARKET_PARAMS.generated.md
+
+  - id: rtm_fshcd
+    canonical_name: rtm-fshcd
+    status: missing
+    identifier_policy: opaque_until_recovered
+
+  - id: smcp_v3_architecture
+    canonical_name: smcp-v3-architecture
+    status: missing
+    identifier_policy: opaque_until_recovered
+
+  - id: quant_engine_9phase
+    canonical_name: quant-engine-9phase
+    status: missing
+    identifier_policy: opaque_until_recovered
+
+  - id: btmm_translation
+    canonical_name: BTMM
+    status: missing
+    verified_public_label: Beat the Market Maker
+
+  - id: mmxm_translation
+    canonical_name: MMXM
+    status: missing
+    verified_public_label: Market Maker Model
+
+  - id: london_close_translation
+    canonical_name: ICT London Close Killzone
+    status: missing
+
+  - id: choch_plan_translation
+    canonical_name: Choch Plan
+    status: missing
+
+  - id: one_am_crt_translation
+    canonical_name: 1AM CRT
+    status: missing
+    acronym_expansion: unverified
+
+  - id: translated_pdf_collection
+    canonical_name: 44 translated PDFs
+    status: missing
+
+  - id: general_platforms_spec
+    canonical_name: general-platforms CSV specification/sample
+    status: missing
+    provisional_contract: data/schema/general-platforms.PROVISIONAL.md
+
+  - id: centered_rolling_fix
+    canonical_name: rolling(center=True) fix commit/code
+    status: missing
+    audit_rule: high_severity_future_leakage_review

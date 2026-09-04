@@ -1,0 +1,44 @@
+version: 1
+canonical_map: docs/resource-connector-map.md
+
+gates:
+  source:
+    require_source_id: true
+    require_role: true
+    require_class: true
+    forbid_unlabelled_generated_content: true
+
+  data:
+    require_manifest: true
+    require_timezone: true
+    require_checksum: true
+    require_ordering_check: true
+    require_duplicate_check: true
+    require_cutoff_for_analysis: true
+    require_forming_bar_policy: true
+
+  strategy:
+    require_frozen_specification: true
+    require_structural_or_explicit_stop_rule: true
+    require_exit_rule: true
+    require_cancellation_rule: true
+    require_cost_model: true
+
+  implementation:
+    forbid_known_future_leakage: true
+    require_lookahead_audit: true
+    require_fill_assumptions: true
+
+  backtest:
+    require_trade_count: true
+    require_profit_factor: true
+    require_expectancy: true
+    require_max_drawdown: true
+    require_average_trade: true
+    require_long_short_split_when_applicable: true
+    require_is_oos_definition: true
+    require_robustness_notes: true
+
+  claims:
+    validated_requires_reproducible_evidence: true
+    no_confidence_percentage_without_model: true

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OHLC Row",
+  "type": "object",
+  "required": ["timestamp", "open", "high", "low", "close"],
+  "properties": {
+    "timestamp": {"type": "string"},
+    "open": {"type": "number"},
+    "high": {"type": "number"},
+    "low": {"type": "number"},
+    "close": {"type": "number"},
+    "volume": {"type": ["number", "null"]},
+    "tick_volume": {"type": ["number", "null"]},
+    "spread": {"type": ["number", "null"]}
+  },
+  "additionalProperties": true
+}

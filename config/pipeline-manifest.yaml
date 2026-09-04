@@ -1,61 +1,67 @@
-project: P
-canonical_document: docs/resource-connector-map.md
-architecture_status: active
-mcp_status: removed
+version: 2
+canonical_map: docs/resource-connector-map.md
+status_date: 2026-09-04
 
-stages:
-  - id: canonical_map
+layers:
+  governance:
     status: complete
     artifacts:
-      - docs/resource-connector-map.md
-
-  - id: repository_architecture
-    status: complete
-    artifacts:
-      - README.md
       - docs/ARCHITECTURE.md
       - docs/SOURCE_POLICY.md
-      - docs/IMPLEMENTATION_PLAN.md
-
-  - id: source_registry
-    status: complete
-    artifacts:
+      - docs/PROVENANCE_STANDARD.md
+      - docs/RECOVERY_PROTOCOL.md
       - config/source-registry.yaml
+      - config/artifact-registry.yaml
+      - config/quality-gates.yaml
 
-  - id: recover_existing_assets
-    status: blocked_missing_inputs
-    tracked_in: docs/MISSING_ASSETS.md
+  knowledge:
+    status: operational_complete_source_ingestion_partial
+    frameworks:
+      - knowledge/01-ict-smc-wyckoff
+      - knowledge/02-rtm
+      - knowledge/03-dealer-microstructure
+      - knowledge/04-auction-market-theory
+    curated:
+      - knowledge/curated/glossary.generated.md
+      - knowledge/curated/SKILL.generated.md
+      - knowledge/curated/MARKET_PARAMS.generated.md
+      - knowledge/curated/CROSS_FRAMEWORK_BOUNDARIES.md
 
-  - id: framework_ingestion
-    status: scaffolded
-    domains:
-      - ict_smc_wyckoff
-      - rtm
-      - dealer_microstructure
-      - auction_market_theory
+  data:
+    status: operational_complete_dataset_dependent
+    protocols:
+      - docs/DATA_PROTOCOL.md
+    schemas:
+      - data/schema/dataset_manifest.schema.json
+      - data/schema/ohlc_row.schema.json
+      - data/schema/tick_row.schema.json
+      - data/schema/macro_event.schema.json
 
-  - id: data_layer
-    status: scaffolded
-    domains:
-      - iran_gold
-      - xauusd
-      - macro_events
+  quant:
+    status: operational_complete_strategy_dependent
+    protocol: docs/QUANT_PROTOCOL.md
+    templates:
+      - quant/templates/STRATEGY_SPEC_TEMPLATE.md
+      - quant/templates/BACKTEST_RUN_TEMPLATE.md
+      - quant/templates/VALIDATION_CHECKLIST.md
+      - quant/templates/EXPERIMENT_LOG_TEMPLATE.md
 
-  - id: quant_backtest
-    status: scaffolded
-    dependency: frozen_strategy_specifications
+  tooling:
+    status: complete
+    commands:
+      - tools/validate_market_csv.py
+      - tools/init_manifest.py
+      - tools/summarize_backtest.py
+      - tools/audit_lookahead.py
+      - tools/validate_registry.py
+      - tools/quality_check.py
 
-  - id: curated_rag
-    status: waiting_for_source_ingestion
-    expected_artifacts:
-      - glossary.md
-      - SKILL.md
-      - MARKET_PARAMS.md
+  integration:
+    status: documented
+    policy:
+      - connectors/INTEGRATION_MATRIX.md
 
-  - id: chatgpt_integration
-    status: design_only
-    allowed_channels:
-      - github_connector
-      - google_drive_connector
-      - knowledge_files
-    note: No MCP server is part of the current repository architecture.
+historical_recovery:
+  status: incomplete
+  registry: config/artifact-registry.yaml
+  missing_list: docs/MISSING_ASSETS.md

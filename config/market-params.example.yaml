@@ -1,0 +1,36 @@
+version: 1
+# Generated operational example. This is NOT the recovered historical MARKET_PARAMS.md.
+
+markets:
+  xauusd:
+    instrument: XAUUSD
+    asset_class: spot_cfd_or_broker_feed
+    source_timezone: null        # set from actual source
+    normalization_timezone: UTC
+    tick_size: null              # derive from actual source metadata
+    price_precision: null
+    contract_size: null
+    session_calendar: source_specific
+    forming_bar_policy: exclude_from_confirmation_by_default
+    primary_intraday_source: user_or_broker_export
+    historical_parallel_source: dukascopy_xauusd
+    visual_cross_check: tradingview
+    macro_sources:
+      - tradingeconomics_api
+      - forexfactory_calendar
+
+  iran_melted_gold:
+    instrument: iran_melted_gold
+    asset_class: otc_gold
+    source_timezone: Asia/Tehran
+    normalization_timezone: Asia/Tehran
+    tick_size: null
+    price_precision: null
+    session_calendar: project_specific_confirm_before_use
+    primary_intraday_source: general_platforms_csv
+    cross_check_source: tgju_melted_gold
+
+rules:
+  no_inferred_numeric_parameter: true
+  source_specific_aliases_required: true
+  record_cutoff_before_analysis: true
