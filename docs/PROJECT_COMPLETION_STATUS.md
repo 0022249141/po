@@ -11,7 +11,9 @@ Framework ingestion infrastructure is active under `docs/FRAMEWORK_INGESTION_PRO
 
 Operationalization governance is active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. The first rule has passed implementation review and is operational: `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
 
-A neutral real-data adapter is now available in `research_core/tpo_dataset_adapter.py`. It can apply the operational TPO engine to MT5-style OHLC exports using an explicit cutoff and a provenance-tracked `source_calendar_day_v1` technical grouping while timezone/session semantics remain unresolved.
+A neutral real-data adapter is available in `research_core/tpo_dataset_adapter.py`. It can apply the operational TPO engine to MT5-style OHLC exports using an explicit cutoff and a provenance-tracked `source_calendar_day_v1` technical grouping while named-session semantics remain blocked.
+
+Timebase qualification governance is now active under `docs/TIMEBASE_QUALIFICATION_PROTOCOL.md` and `config/timebase/XAUUSD_o.yaml`. A prior read-only LiteFinance MT5 terminal observation supports a **candidate UTC+03:00 source offset**, but that observation is not yet provenance-bound to the current `XAUUSD_o` export bundle and does not establish DST history. Named-session use therefore remains prohibited.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -29,6 +31,7 @@ The repository is **not historically complete** because several pre-existing art
 | Dealer microstructure | COMPLETE shell + definition layer | PARTIAL — theory concepts defined; observable proxies not frozen |
 | Auction Market Theory | COMPLETE shell + definition + operational layer | PARTIAL — TPO occupancy engine operational; canonical POC/Value Area/initiative-responsive/session formulas still pending |
 | XAUUSD data layer | COMPLETE | MULTI-TIMEFRAME QUALIFIED bundle + first operational real-data smoke test |
+| Timebase qualification | COMPLETE gate + validator | CANDIDATE — UTC+03:00 observation exists but is not bound to current bundle; DST unresolved |
 | TPO dataset adapter | COMPLETE | VERIFIED on real XAUUSD M5 export under neutral source-day policy |
 | MTF qualification engine | COMPLETE | VERIFIED on H1/M15/M5/Tick bundle |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
@@ -41,7 +44,20 @@ The repository is **not historically complete** because several pre-existing art
 
 The registered `XAUUSD_o` H1/M15/M5/Tick bundle has exact internal OHLC aggregation consistency on complete intervals and exact BID-tick OHLC reconstruction over the common completed tick overlap. It is approved as `MULTI-TIMEFRAME-QUALIFIED PRICE DATA — WITH TIMEBASE / SOURCE WARNINGS`.
 
-It is not yet promoted to fully qualified backtest data because exact broker/feed identity, server timezone/DST policy, symbol point/contract metadata, session calendar, and one small tick-count discrepancy remain unresolved.
+It is not yet promoted to fully qualified backtest data because exact broker/feed binding, verified server timezone/DST policy, symbol point/contract metadata, session calendar, and one small tick-count discrepancy remain unresolved.
+
+## XAUUSD timebase candidate
+
+The timebase registry currently classifies `xauusd_o_mtf_20260903_0922` as `candidate`.
+
+Evidence retained in `data/evidence/XAUUSD_timebase_candidate_20260722.md` records a prior LiteFinance MT5 observation in which UTC, Tehran local time, and trade-server time were observed at the same event. The trade-server clock was consistent with approximately UTC+03:00. The observation identified `LiteFinance Global LLC / LiteFinance-MT5-Live`.
+
+This evidence is **not sufficient for verification** because the current `XAUUSD_o` bundle is not independently bound to that terminal/server and the applicable DST history is not proven. Therefore:
+
+- candidate offset: `UTC+03:00`;
+- authoritative conversion of the current bundle: blocked;
+- London/New York/Asia session labels: blocked;
+- `source_calendar_day_v1` remains the safe neutral grouping.
 
 ## First operational real-data application
 
@@ -50,14 +66,13 @@ The operational TPO engine was smoke-tested against the real user export `XAUUSD
 The adapter uses `config/session-policies/source-calendar-day.yaml`:
 
 - `session_id = source-day:YYYY-MM-DD`;
-- source timestamps remain `source_local_unknown_timezone`;
-- no timezone, DST, London, New York, Asia, exchange-session, or broker-business-day semantics are inferred;
+- no authoritative timezone, DST, London, New York, Asia, exchange-session, or broker-business-day semantics are inferred;
 - bar closure is determined only by `bar_start + timeframe <= explicit_cutoff`;
 - the supplied `0.10` profile increment is recorded as a research parameter, not asserted as instrument tick size.
 
 For `source-day:2026-09-03`, the observed M5 segment contains 100 closed bars from 01:00 through 09:15. The 09:20 bar is forming at cutoff and contributes zero occupancy. No internal M5 gaps exist inside that observed segment. Full provenance and descriptive occupancy diagnostics are recorded in `data/reports/XAUUSD_o_M5_20260903.source-day-tpo.md`.
 
-This proves deterministic real-data execution of the operational engine; it does **not** resolve named-session semantics or create trading/backtest evidence.
+This proves deterministic real-data execution of the operational engine; it does **not** create named-session or trading/backtest evidence.
 
 ## Knowledge and rule states
 
@@ -69,7 +84,11 @@ Operationalization readiness is audited separately as:
 
 `blocked → candidate → operational → backtest_ready`
 
-A `defined` concept does not become a candidate until all machine-rule dependencies are explicit. A concept may remain blocked or `rejected_or_unresolved` when source ambiguity, missing observables, or irreducible discretion prevents promotion.
+Timebase states are audited separately as:
+
+`unresolved → candidate → verified`
+
+A `candidate` timebase is allowed for sensitivity analysis only; named-session use requires `verified`.
 
 ## First operational rule
 
@@ -80,7 +99,7 @@ The implementation review confirms:
 - closed bars only;
 - forming bars are strict no-ops;
 - externally supplied session IDs only;
-- no timezone/DST inference;
+- no timezone/DST inference inside the engine;
 - Decimal-based integer-tick normalization;
 - inclusive normalized low/high occupancy;
 - strict closed-timestamp ordering;
@@ -88,14 +107,12 @@ The implementation review confirms:
 - incomplete-session marking when an upstream gap is declared;
 - no POC, Value Area, initiative/responsive, entry/exit, profitability, centralized-volume, or dealer-inventory claim.
 
-Operational status is generic. The current XAUUSD bundle still cannot be assigned London/NY/Asia session semantics until its timebase/session provenance is resolved.
-
 ## Current blocked areas
 
 - RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe, and forming-bar rules.
 - Dealer/microstructure concepts remain blocked until measurable observable proxies and lag/sampling policies are frozen.
-- AMT acceptance/rejection remains blocked until measurement window, threshold, confirmation, and XAUUSD session/timebase policy are source-frozen.
-- Named XAUUSD sessions remain blocked until exact timezone/DST/session provenance is resolved.
+- AMT acceptance/rejection remains blocked until measurement window, threshold, confirmation, and verified XAUUSD session/timebase policy are source-frozen.
+- Named XAUUSD sessions remain blocked until the candidate UTC+03:00 mapping is bound to the exact current export source and DST/session provenance is verified.
 
 ## What “complete” means here
 
@@ -128,11 +145,11 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 ## Current next workstream
 
-1. continue authoritative source extraction at exact passage/video-timestamp/chapter-page level;
-2. close operationalization blockers concept-by-concept without cross-framework substitution;
-3. resolve XAUUSD timezone/DST/session provenance before any named-session interpretation;
-4. keep `amt_tpo_profile_core_v1` descriptive until a downstream Strategy Specification defines how it is used;
-5. freeze any downstream Strategy Specification before implementation/backtest;
+1. bind timebase evidence directly to the exact current XAUUSD export source using terminal/export metadata;
+2. establish the applicable server DST policy/history;
+3. only then define named London/New York/Asia session policies;
+4. continue authoritative framework source extraction and operationalization independently;
+5. keep `amt_tpo_profile_core_v1` descriptive until a downstream Strategy Specification defines how it is used;
 6. backtest only after dataset timebase, execution model, costs, IS/OOS, lookahead, and robustness controls are explicit.
 
 ## Quality gate
