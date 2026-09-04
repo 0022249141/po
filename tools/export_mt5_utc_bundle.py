@@ -14,7 +14,9 @@ from research_core.mt5_utc_bundle import (
     bar_is_closed,
     epoch_milliseconds_to_utc_iso,
     epoch_seconds_to_utc_iso,
+    gold_symbol_candidates,
     sha256_file,
+    validate_utc_bundle_manifest,
 )
 
 
@@ -87,7 +89,15 @@ def main() -> int:
     try:
         symbol_info = mt5.symbol_info(args.symbol)
         if symbol_info is None:
+            names = [getattr(item, "name", "") for item in (mt5.symbols_get() or [])]
+            candidates = gold_symbol_candidates(names)
             print(f"ERROR: symbol not found: {args.symbol}")
+            if candidates:
+                print("Available XAU/GOLD candidates:")
+                for name in candidates[:20]:
+                    print(f"  {name}")
+                if len(candidates) == 1:
+                    print(f"Retry with: py tools\\export_mt5_utc_bundle.py --symbol {candidates[0]} --bars-days {args.bars_days} --ticks-days {args.ticks_days}")
             return 2
         if not symbol_info.visible and not mt5.symbol_select(args.symbol, True):
             print(f"ERROR: could not select symbol: {args.symbol}")
@@ -236,6 +246,14 @@ def main() -> int:
         quality_path = bundle_dir / "quality_report.json"
         quality_path.write_text(json.dumps(quality, indent=2, ensure_ascii=False), encoding="utf-8")
 
+        validation = validate_utc_bundle_manifest(manifest, bundle_dir)
+        validation_path = bundle_dir / "validation_report.json"
+        validation_path.write_text(json.dumps(validation, indent=2, ensure_ascii=False), encoding="utf-8")
+        if validation["status"] == "fail":
+            print("ERROR: freshly generated bundle failed self-validation")
+            print(json.dumps(validation, indent=2, ensure_ascii=False))
+            return 1
+
         zip_path = bundle_dir.with_suffix(".zip")
         with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
             for file in bundle_dir.rglob("*"):
@@ -244,9 +262,12 @@ def main() -> int:
 
         print("SUCCESS")
         print(f"Bundle directory: {bundle_dir}")
+        print(f"Manifest: {manifest_path}")
         print(f"ZIP: {zip_path}")
         print(f"Broker/server: {manifest['broker']['company']} / {manifest['broker']['server']}")
+        print(f"Symbol: {args.symbol}")
         print("Timestamp semantics: UTC from MetaTrader5 Python API")
+        print(f"Self-validation: {validation['status']}")
         print("No trading/order function is called by this exporter.")
         return 0
     except Exception as exc:
