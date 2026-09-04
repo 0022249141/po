@@ -59,6 +59,9 @@ session_statistics:
       median: 8443.0
       q75: 12161.75
       mean: 8697.5
+    occupied_bins:
+      median: 8444.0
+      mean: 8698.5
     occupancy_events:
       q25: 55037.25
       median: 76039.5
@@ -76,6 +79,10 @@ session_statistics:
       q75: 7265.5
       mean: 6468.40625
       max: 41429.0
+    occupied_bins:
+      median: 5456.5
+      mean: 6443.484375
+      max: 41430.0
     occupancy_events:
       q25: 46342.25
       median: 54008.0
@@ -94,6 +101,10 @@ session_statistics:
       q75: 8675.25
       mean: 7484.190476190476
       max: 27183.0
+    occupied_bins:
+      median: 6262.5
+      mean: 7470.126984126984
+      max: 27184.0
     occupancy_events:
       q25: 54142.75
       median: 65066.0
