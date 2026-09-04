@@ -1,0 +1,141 @@
+version: 1
+canonical_protocol: docs/FRAMEWORK_INGESTION_PROTOCOL.md
+updated: 2026-09-04
+
+concepts:
+  ict_market_structure_scope:
+    framework: ict_smc_wyckoff
+    source_ids: [ict_official_youtube]
+    state: source_noted
+    evidence_path: knowledge/01-ict-smc-wyckoff/source-notes/ict-official-market-structure.md
+    definition_path: null
+    note: Official ICT material on market structure is verified, but BOS/CHoCH/MSS/FVG/OB/sweep rules are not defined from titles or descriptions.
+
+  wyckoff_method_scope:
+    framework: ict_smc_wyckoff
+    source_ids: [wyckoff_analytics]
+    state: source_noted
+    evidence_path: knowledge/01-ict-smc-wyckoff/source-notes/wyckoff-method-official.md
+    definition_path: null
+    note: Native Wyckoff method scope is verified; machine rules for phases/events/tests remain source-extraction work.
+
+  rtm_valid_swing:
+    framework: rtm
+    source_ids: [readthemarket]
+    state: defined
+    evidence_path: knowledge/02-rtm/source-notes/readthemarket-official.md
+    definition_path: knowledge/02-rtm/definitions.md
+    note: Native swing boundary is source-supported; no entry logic is implied.
+
+  rtm_ftr:
+    framework: rtm
+    source_ids: [readthemarket]
+    state: source_noted
+    evidence_path: knowledge/02-rtm/source-notes/readthemarket-official.md
+    definition_path: null
+  rtm_bsz:
+    framework: rtm
+    source_ids: [readthemarket]
+    state: source_noted
+    evidence_path: knowledge/02-rtm/source-notes/readthemarket-official.md
+    definition_path: null
+  rtm_mpl:
+    framework: rtm
+    source_ids: [readthemarket]
+    state: source_noted
+    evidence_path: knowledge/02-rtm/source-notes/readthemarket-official.md
+    definition_path: null
+  rtm_quasimodo:
+    framework: rtm
+    source_ids: [readthemarket]
+    state: source_noted
+    evidence_path: knowledge/02-rtm/source-notes/readthemarket-official.md
+    definition_path: null
+  rtm_compression:
+    framework: rtm
+    source_ids: [readthemarket]
+    state: source_noted
+    evidence_path: knowledge/02-rtm/source-notes/readthemarket-official.md
+    definition_path: null
+
+  dealer_informed_trading:
+    framework: dealer_microstructure
+    source_ids: [kyle_1985]
+    state: defined
+    evidence_path: knowledge/03-dealer-microstructure/paper-notes/core-microstructure-verified.md
+    definition_path: knowledge/03-dealer-microstructure/definitions.md
+  dealer_adverse_selection:
+    framework: dealer_microstructure
+    source_ids: [glosten_milgrom_1985]
+    state: defined
+    evidence_path: knowledge/03-dealer-microstructure/paper-notes/core-microstructure-verified.md
+    definition_path: knowledge/03-dealer-microstructure/definitions.md
+  dealer_inventory_risk:
+    framework: dealer_microstructure
+    source_ids: [ho_stoll_1981]
+    state: defined
+    evidence_path: knowledge/03-dealer-microstructure/paper-notes/core-microstructure-verified.md
+    definition_path: knowledge/03-dealer-microstructure/definitions.md
+  dealer_liquidity_provision:
+    framework: dealer_microstructure
+    source_ids: [grossman_miller_1988]
+    state: defined
+    evidence_path: knowledge/03-dealer-microstructure/paper-notes/core-microstructure-verified.md
+    definition_path: knowledge/03-dealer-microstructure/definitions.md
+  dealer_immediacy:
+    framework: dealer_microstructure
+    source_ids: [grossman_miller_1988]
+    state: defined
+    evidence_path: knowledge/03-dealer-microstructure/paper-notes/core-microstructure-verified.md
+    definition_path: knowledge/03-dealer-microstructure/definitions.md
+  dealer_price_impact:
+    framework: dealer_microstructure
+    source_ids: [kyle_1985]
+    state: defined
+    evidence_path: knowledge/03-dealer-microstructure/paper-notes/core-microstructure-verified.md
+    definition_path: knowledge/03-dealer-microstructure/definitions.md
+
+  amt_market_profile_core:
+    framework: auction_market_theory
+    source_ids: [cme_market_profile_education, dalton_mind_over_markets, dalton_markets_in_profile]
+    state: defined
+    evidence_path: knowledge/04-auction-market-theory/source-notes/cme-dalton-market-profile-verified.md
+    definition_path: knowledge/04-auction-market-theory/definitions.md
+  amt_price_acceptance_rejection:
+    framework: auction_market_theory
+    source_ids: [cme_market_profile_education]
+    state: defined
+    evidence_path: knowledge/04-auction-market-theory/source-notes/cme-dalton-market-profile-verified.md
+    definition_path: knowledge/04-auction-market-theory/definitions.md
+  amt_value_area:
+    framework: auction_market_theory
+    source_ids: [dalton_mind_over_markets]
+    state: source_noted
+    evidence_path: knowledge/04-auction-market-theory/source-notes/cme-dalton-market-profile-verified.md
+    definition_path: null
+    note: Value Area is source-verified vocabulary, but the project has not captured a canonical calculation algorithm.
+  amt_poc:
+    framework: auction_market_theory
+    source_ids: [cme_market_profile_education]
+    state: source_indexed
+    evidence_path: null
+    definition_path: null
+    note: Project vocabulary only; canonical project calculation is not yet source-captured.
+  amt_initiative_activity:
+    framework: auction_market_theory
+    source_ids: [dalton_mind_over_markets]
+    state: source_indexed
+    evidence_path: null
+    definition_path: null
+  amt_responsive_activity:
+    framework: auction_market_theory
+    source_ids: [dalton_mind_over_markets]
+    state: source_indexed
+    evidence_path: null
+    definition_path: null
+
+rules:
+  no_cross_framework_definition_substitution: true
+  defined_requires_definition_artifact: true
+  operational_requires_explicit_machine_rule: true
+  backtest_ready_requires_frozen_quant_spec: true
