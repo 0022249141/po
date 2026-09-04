@@ -11,6 +11,20 @@
 
 These sources are not interchangeable. Every analysis/backtest must state which provider generated the data and must not splice providers without an explicit normalization step.
 
+## First canonical ingest
+
+The first real dataset registered under the current repository architecture is:
+
+`XAUUSD_o_M5_202503210000_202609031255.csv`
+
+Repository records:
+
+- manifest: `data/manifests/XAUUSD_o_M5_202503210000_202609031255.json`
+- validation report: `data/reports/XAUUSD_o_M5_202503210000_202609031255.validation.md`
+- source id: `user_mt5_export`
+
+It contains 103,037 M5 rows from `2025-03-21 00:00:00` through `2026-09-03 12:55:00` in unresolved source-local time. Structural OHLC/timestamp checks pass with gap warnings. The final 12:55 row is not accepted as a closed candle until the export cutoff is proven.
+
 ## Validation checklist
 
 - symbol/provider identity
@@ -28,6 +42,8 @@ These sources are not interchangeable. Every analysis/backtest must state which 
 ## Backtest use
 
 Dukascopy is intended as an independent historical benchmark against broker/MT5 data. Differences between feeds must be measured rather than assumed negligible.
+
+The first MT5-derived M5 dataset is approved for **price-based research with warnings**, not yet for timezone-sensitive session research or fully qualified transaction-cost backtesting. Promotion requires exact source/server timezone, broker/feed identity, point/digit specification, export cutoff, and session-calendar qualification.
 
 ## TradingView role
 
