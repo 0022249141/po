@@ -1,0 +1,162 @@
+version: 1
+spec_id: xauusd_ny_preopen_range_breakout_baseline_v1
+status: frozen_signal_spec
+spec_class: rule_based_research_baseline
+owner: project
+frozen_at_utc: "2026-09-04T07:55:00Z"
+
+purpose: >-
+  Freeze a simple causal New York continuation baseline before any strategy backtest. This is a
+  falsification benchmark, not the project's final trading method and not an ICT/SMC/RTM rule.
+
+research_hypothesis: >-
+  After a complete four-hour pre-New-York reference range has formed, the first M5 close outside
+  that range during the first four hours of the New York research session may contain directional
+  continuation information through the remainder of that New York session.
+
+hypothesis_status:
+  derived_from_prior_result: false
+  rationale: >-
+    Prior descriptive work established that New York has larger aggregate session range and TPO
+    occupancy activity than London, but it did not establish breakout direction or profitability.
+    This strategy is therefore an explicitly new falsifiable baseline rather than a claimed
+    consequence of those descriptive results.
+
+data:
+  market: XAUUSD
+  symbol: XAUUSD_o
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  input_timebase: verified_utc
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  closed_bars_only: true
+  forming_bars_prohibited: true
+
+session_context:
+  policy_id: xauusd_major_fx_sessions_v1
+  policy_path: config/session-policies/xauusd-major-sessions.yaml
+  primary_session: new_york
+  reference_session_membership_required: london
+  boundaries_from_policy_only: true
+  holiday_inference: false
+
+reference_range:
+  id: pre_ny_4h_london_context_range_v1
+  start_rule: new_york_session_open_minus_240_minutes
+  end_rule: new_york_session_open_exclusive
+  duration_minutes: 240
+  expected_m5_bars: 48
+  all_bars_must_be_closed: true
+  all_bars_must_be_present: true
+  all_bars_must_classify_as_london: true
+  high_rule: maximum_high_of_reference_bars
+  low_rule: minimum_low_of_reference_bars
+  zero_or_negative_range_action: no_trade
+
+regime_context:
+  source_spec: quant/studies/XAUUSD_NAMED_SESSION_TPO_REGIME_ROBUSTNESS_V1.yaml
+  allowed_as_reporting_dimension: true
+  allowed_as_entry_filter: false
+  allowed_to_change_direction: false
+  current_day_outcome_in_label_prohibited: true
+
+entry:
+  side_policy: symmetric_long_short
+  entry_window_start: new_york_session_open_inclusive
+  entry_window_end: new_york_session_open_plus_240_minutes_exclusive_for_trigger_bar
+  trigger_priority: first_qualifying_closed_bar_only
+  long_trigger: first_closed_m5_close_strictly_above_reference_high
+  short_trigger: first_closed_m5_close_strictly_below_reference_low
+  trigger_on_equal_boundary: false
+  order_type: market
+  fill_timing: next_m5_bar_open
+  next_bar_must_exist: true
+  maximum_trades_per_session: 1
+  opposite_signal_after_first_trigger: ignore
+  no_trigger_action: no_trade
+
+invalidation_and_stop:
+  stop_style: structural_reference_boundary
+  long_stop_level: reference_low
+  short_stop_level: reference_high
+  stop_may_not_be_widened: true
+  stop_may_not_be_moved_before_entry: true
+  zero_or_negative_initial_risk_action: no_trade
+
+exit:
+  profit_target: none
+  partial_exits: none
+  trailing_stop: none
+  protective_stop_active: true
+  time_exit: new_york_session_end
+  time_exit_fill_reference: final_closed_m5_bar_close_of_new_york_session
+  whichever_occurs_first:
+    - protective_stop
+    - time_exit
+
+risk_and_sizing:
+  research_return_unit: R
+  initial_risk_unit: absolute_entry_fill_to_initial_stop_fill_distance
+  account_currency_position_sizing: not_enabled_in_v1
+  maximum_concurrent_positions: 1
+  pyramiding: prohibited
+  averaging_down: prohibited
+
+execution_model:
+  status: execution_cost_qualification_required_before_net_backtest_claim
+  bar_price_side_semantics: unresolved
+  spread_field_semantics: available_but_not_yet_frozen_for_fills
+  commission: unresolved
+  slippage: unresolved
+  same_bar_stop_handling: must_be_frozen_before_execution_backtest
+  gap_behavior: must_be_frozen_before_execution_backtest
+  net_profitability_claim_allowed: false
+  signal_backtest_allowed: true
+  promotion_to_live_allowed: false
+
+causality:
+  future_data_prohibited: true
+  same_bar_close_fill_prohibited: true
+  centered_windows_prohibited: true
+  negative_shift_prohibited: true
+  finalized_full_new_york_session_features_as_entry_inputs_prohibited: true
+  reference_range_complete_before_first_possible_trigger: true
+
+baseline_parameters:
+  pre_ny_reference_minutes: 240
+  trigger_window_minutes: 240
+  timeframe: M5
+  boundary_break_rule: strict_close
+  target_model: none
+  regime_filter: none
+  optimization_in_v1: prohibited
+
+acceptance_criteria_for_signal_research:
+  criteria_class: project_defined_pretest_gate
+  minimum_total_trades: 60
+  minimum_long_trades: 20
+  minimum_short_trades: 20
+  gross_expectancy_R_must_be_greater_than: 0.0
+  gross_profit_factor_must_be_greater_than: 1.0
+  minimum_positive_months_out_of_eligible_months: 4
+  report_max_drawdown_R: true
+  report_long_short_separately: true
+  report_low_normal_high_regimes_separately: true
+  execution_cost_sensitivity_required_before_promotion: true
+  failure_action: reject_v1_without_parameter_tuning
+
+interpretation_boundaries:
+  research_baseline_only: true
+  not_final_strategy: true
+  not_ict_kill_zone: true
+  not_smc_or_rtm_rule: true
+  prior_session_range_findings_do_not_prove_this_hypothesis: true
+  predictive_edge_not_established: true
+  profitability_not_established: true
+  permission_to_trade: false
+
+change_control:
+  frozen_signal_spec_is_immutable: true
+  any_signal_rule_change_requires_new_version: true
+  execution_model_may_be_frozen_in_separate_bound_spec_without_mutating_signal_rules: true
