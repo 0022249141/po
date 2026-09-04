@@ -1,0 +1,69 @@
+version: 1
+canonical_protocol: docs/FRAMEWORK_INGESTION_PROTOCOL.md
+updated: 2026-09-04
+
+frameworks:
+  ict_smc_wyckoff:
+    path: knowledge/01-ict-smc-wyckoff
+    source_ids:
+      - ict_official_youtube
+      - ict_official_x
+      - wyckoff_analytics
+      - ggu_fi354
+    status: source_indexed
+    independent_definition_required: true
+    planned_artifacts:
+      - source-notes
+      - glossary.md
+      - rules.md
+      - subjective-vs-operational.md
+      - crosswalk.md
+
+  rtm:
+    path: knowledge/02-rtm
+    source_ids:
+      - readthemarket
+      - rtm_academy
+    status: source_indexed
+    independent_definition_required: true
+    named_concepts:
+      - FTR
+      - BSZ
+      - MPL
+      - Quasimodo
+      - Compression
+    missing_internal_dependency:
+      - rtm-fshcd
+
+  dealer_microstructure:
+    path: knowledge/03-dealer-microstructure
+    source_ids:
+      - kyle_1985
+      - glosten_milgrom_1985
+      - ho_stoll_1981
+      - grossman_miller_1988
+      - arxiv_2003_05958
+      - arxiv_2407_17393
+    status: source_indexed
+    independent_definition_required: true
+    direct_inventory_visibility: false
+
+  auction_market_theory:
+    path: knowledge/04-auction-market-theory
+    source_ids:
+      - dalton_mind_over_markets
+      - dalton_markets_in_profile
+      - cme_market_profile_education
+    status: source_indexed
+    independent_definition_required: true
+    named_concepts:
+      - Value Area
+      - POC
+      - Initiative activity
+      - Responsive activity
+    centralized_volume_required_for_centralized_volume_claims: true
+
+promotion_rule: >-
+  No concept may be marked operational or backtest_ready solely from a generic definition,
+  community implementation, or cross-framework analogy. Exact source provenance and explicit
+  rule fields are required.
