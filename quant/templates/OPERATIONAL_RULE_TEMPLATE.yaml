@@ -1,0 +1,37 @@
+version: 1
+concept_id: null
+framework: null
+source_ids: []
+rule_state: operational_candidate
+
+instrument_scope: null
+input_data: []
+timeframe_or_event_clock: null
+lookback: null
+reference_set: null
+state_variables: {}
+trigger: null
+confirmation: null
+invalidation: null
+entry_timing: not_applicable
+exit_or_target: not_applicable
+forming_bar_policy: null
+timezone_or_session_dependency: null
+missing_data_policy: null
+tie_and_edge_case_policy: null
+measurable_proxy: not_applicable
+
+implementation_boundary:
+  allowed_inputs: []
+  prohibited_future_information: true
+  closed_bar_only_where_required: true
+  repainting_allowed: false
+
+provenance:
+  definition_path: null
+  evidence_paths: []
+  frozen_at_commit: null
+
+quant_handoff:
+  strategy_spec_path: null
+  backtest_ready: false
