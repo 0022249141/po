@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from statistics import median
-from typing import Any
+from typing import Any, Mapping
 
 import yaml
 
@@ -37,6 +37,52 @@ def _risk_summary(values: list[float]) -> dict[str, float]:
     }
 
 
+def compute_residual_friction_budget(
+    ledger: list[Mapping[str, Any]],
+    *,
+    spread_price: float,
+    spread_points: float,
+    point_size: float,
+) -> dict[str, Any]:
+    if not ledger:
+        raise ValueError("trade ledger must be non-empty")
+    if point_size <= 0:
+        raise ValueError("point_size must be positive")
+    if spread_price < 0 or spread_points < 0:
+        raise ValueError("spread inputs must be non-negative")
+
+    risks: list[float] = []
+    base_adjusted: list[float] = []
+    inverse_risk_sum = 0.0
+    for trade in ledger:
+        risk = float(trade["initial_risk"])
+        gross_R = float(trade["gross_R"])
+        if risk <= 0:
+            raise ValueError("initial_risk must be positive for every trade")
+        risks.append(risk)
+        inverse_risk_sum += 1.0 / risk
+        base_adjusted.append(gross_R - spread_price / risk)
+
+    if inverse_risk_sum <= 0:
+        raise ValueError("sum of inverse initial risk must be positive")
+
+    base_metrics = summarize_pnls(base_adjusted, initial_capital=0.0)
+    base_total_R = float(base_metrics["net_profit"])
+    break_even_extra_price = base_total_R / inverse_risk_sum
+    break_even_extra_points = break_even_extra_price / point_size
+    total_break_even_round_trip_points = spread_points + break_even_extra_points
+    return {
+        "base_metrics": base_metrics,
+        "risk_geometry": {
+            "initial_risk": _risk_summary(risks),
+            "sum_inverse_initial_risk": inverse_risk_sum,
+        },
+        "break_even_extra_round_trip_price": break_even_extra_price,
+        "break_even_extra_round_trip_points": break_even_extra_points,
+        "total_break_even_round_trip_points": total_break_even_round_trip_points,
+    }
+
+
 def run_residual_friction_budget(
     gross_result_json: str | Path,
     *,
@@ -66,27 +112,13 @@ def run_residual_friction_budget(
     point_size = float(binding["point_size"])
     spread_points = float(binding["primary_spread_points"])
     spread_price = spread_points * point_size
-
-    risks: list[float] = []
-    base_adjusted: list[float] = []
-    inverse_risk_sum = 0.0
-    for trade in ledger:
-        risk = float(trade["initial_risk"])
-        gross_R = float(trade["gross_R"])
-        if risk <= 0:
-            raise ValueError("initial_risk must be positive for every trade")
-        risks.append(risk)
-        inverse_risk_sum += 1.0 / risk
-        base_adjusted.append(gross_R - spread_price / risk)
-
-    if inverse_risk_sum <= 0:
-        raise ValueError("sum of inverse initial risk must be positive")
-
-    base_metrics = summarize_pnls(base_adjusted, initial_capital=0.0)
-    base_total_R = float(base_metrics["net_profit"])
-    break_even_extra_price = base_total_R / inverse_risk_sum
-    break_even_extra_points = break_even_extra_price / point_size
-    total_break_even_round_trip_points = spread_points + break_even_extra_points
+    computed = compute_residual_friction_budget(
+        ledger,
+        spread_price=spread_price,
+        spread_points=spread_points,
+        point_size=point_size,
+    )
+    base_metrics = computed["base_metrics"]
 
     recorded_spread_path = root / str(binding["spread_result_path"])
     recorded_spread = _load_yaml(recorded_spread_path)
@@ -113,14 +145,11 @@ def run_residual_friction_budget(
             "spread_price": spread_price,
             "metrics": base_metrics,
         },
-        "risk_geometry": {
-            "initial_risk": _risk_summary(risks),
-            "sum_inverse_initial_risk": inverse_risk_sum,
-        },
+        "risk_geometry": computed["risk_geometry"],
         "residual_friction_budget": {
-            "break_even_extra_round_trip_price": break_even_extra_price,
-            "break_even_extra_round_trip_points": break_even_extra_points,
-            "total_break_even_round_trip_points_including_primary_spread": total_break_even_round_trip_points,
+            "break_even_extra_round_trip_price": computed["break_even_extra_round_trip_price"],
+            "break_even_extra_round_trip_points": computed["break_even_extra_round_trip_points"],
+            "total_break_even_round_trip_points_including_primary_spread": computed["total_break_even_round_trip_points"],
             "strict_positive_condition": "actual_uniform_extra_round_trip_price_friction_must_be_less_than_break_even",
             "pf_and_expectancy_share_same_break_even_under_this_additive_model": True,
         },
