@@ -7,13 +7,13 @@
 
 The repository is **operationally complete as a research core**: it can register sources, validate data, create provenance manifests, qualify multi-timeframe OHLC/tick bundles, audit common lookahead patterns, define/freeze strategy specifications, summarize backtest trade results, and expose compact curated artifacts for retrieval.
 
-Framework ingestion infrastructure is active under `docs/FRAMEWORK_INGESTION_PROTOCOL.md`, `knowledge/FRAMEWORK_INGESTION_STATUS.yaml`, and `knowledge/CONCEPT_REGISTRY.yaml`. Native-framework isolation and promotion states prevent unverified cross-framework substitutions from becoming project truth.
+Framework ingestion and operationalization governance are active under `docs/FRAMEWORK_INGESTION_PROTOCOL.md`, `knowledge/CONCEPT_REGISTRY.yaml`, `docs/OPERATIONALIZATION_GATE.md`, and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. Native-framework isolation prevents unverified cross-framework substitutions from becoming project truth.
 
-Operationalization governance is active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. The first rule has passed implementation review and is operational: `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
+The first operational rule remains `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
 
-A neutral real-data adapter is available in `research_core/tpo_dataset_adapter.py`. It can apply the operational TPO engine to MT5-style OHLC exports using an explicit cutoff and a provenance-tracked `source_calendar_day_v1` technical grouping while named-session semantics remain blocked.
+A neutral real-data adapter exists in `research_core/tpo_dataset_adapter.py`. It can apply the operational TPO engine using an explicit cutoff and provenance-tracked technical grouping.
 
-Timebase qualification governance is now active under `docs/TIMEBASE_QUALIFICATION_PROTOCOL.md` and `config/timebase/XAUUSD_o.yaml`. A prior read-only LiteFinance MT5 terminal observation supports a **candidate UTC+03:00 source offset**, but that observation is not yet provenance-bound to the current `XAUUSD_o` export bundle and does not establish DST history. Named-session use therefore remains prohibited.
+The XAUUSD timebase blocker has now been removed for a **new canonical UTC bundle**: `xauusd_o_utc_20260904_052959`. The export run directly binds UTC timestamp semantics, LiteFinance broker/server identity, terminal metadata, symbol specification, cutoff, and per-file SHA-256 values. This does **not** retroactively verify the older source-local bundle.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -26,106 +26,81 @@ The repository is **not historically complete** because several pre-existing art
 | Framework ingestion protocol | COMPLETE | ACTIVE — source-faithful ingestion ongoing |
 | Concept registry / definition gate | COMPLETE | PARTIAL — source-supported definitions only |
 | Operationalization gate | COMPLETE | ACTIVE — first operational rule admitted after implementation audit |
-| ICT/SMC/Wyckoff framework | COMPLETE shell + rule ledger | PARTIAL — official market-structure and Wyckoff scope notes exist; detailed rule extraction pending |
+| ICT/SMC/Wyckoff framework | COMPLETE shell + rule ledger | PARTIAL — official scope notes exist; detailed rule extraction pending |
 | RTM framework | COMPLETE shell + rule ledger | PARTIAL — valid-swing definition captured; FTR/BSZ/MPL/Quasimodo/Compression rules pending; `rtm-fshcd` missing |
 | Dealer microstructure | COMPLETE shell + definition layer | PARTIAL — theory concepts defined; observable proxies not frozen |
-| Auction Market Theory | COMPLETE shell + definition + operational layer | PARTIAL — TPO occupancy engine operational; canonical POC/Value Area/initiative-responsive/session formulas still pending |
-| XAUUSD data layer | COMPLETE | MULTI-TIMEFRAME QUALIFIED bundle + first operational real-data smoke test |
-| Timebase qualification | COMPLETE gate + validator | CANDIDATE — UTC+03:00 observation exists but is not bound to current bundle; DST unresolved |
-| TPO dataset adapter | COMPLETE | VERIFIED on real XAUUSD M5 export under neutral source-day policy |
-| MTF qualification engine | COMPLETE | VERIFIED on H1/M15/M5/Tick bundle |
+| Auction Market Theory | COMPLETE shell + definition + operational layer | PARTIAL — TPO occupancy engine operational; canonical POC/Value Area/initiative-responsive formulas pending |
+| XAUUSD data layer | COMPLETE | canonical UTC bundle qualified for timebase and multi-timeframe price research, with tick-history warnings |
+| Timebase qualification | COMPLETE gate + validator | VERIFIED for `xauusd_o_utc_20260904_052959` |
+| TPO dataset adapter | COMPLETE | VERIFIED on real XAUUSD under neutral source-day policy; named-session policy not yet frozen |
+| MTF qualification engine | COMPLETE | VERIFIED on legacy and canonical H1/M15/M5 bundles |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
 | Quant research workflow | COMPLETE | STRATEGY-DEPENDENT |
 | Lookahead/repainting audit tooling | COMPLETE | Static audit only; code-specific review still required |
 | Curated RAG artifacts | COMPLETE as generated baseline | Historical originals missing |
-| ChatGPT/GitHub integration policy | COMPLETE | Runtime feature availability depends on product/account configuration |
 
-## Verified XAUUSD milestone
+## Canonical UTC XAUUSD milestone
 
-The registered `XAUUSD_o` H1/M15/M5/Tick bundle has exact internal OHLC aggregation consistency on complete intervals and exact BID-tick OHLC reconstruction over the common completed tick overlap. It is approved as `MULTI-TIMEFRAME-QUALIFIED PRICE DATA — WITH TIMEBASE / SOURCE WARNINGS`.
+Reviewed dataset: `xauusd_o_utc_20260904_052959`.
 
-It is not yet promoted to fully qualified backtest data because exact broker/feed binding, verified server timezone/DST policy, symbol point/contract metadata, session calendar, and one small tick-count discrepancy remain unresolved.
+Records:
 
-## XAUUSD timebase candidate
+- manifest: `data/manifests/XAUUSD_o_UTC_20260904_052959.json`
+- qualification report: `data/reports/XAUUSD_o_UTC_20260904_052959.qualification.md`
+- exporter protocol: `docs/MT5_UTC_EXPORT_PROTOCOL.md`
 
-The timebase registry currently classifies `xauusd_o_mtf_20260903_0922` as `candidate`.
+Bound identity:
 
-Evidence retained in `data/evidence/XAUUSD_timebase_candidate_20260722.md` records a prior LiteFinance MT5 observation in which UTC, Tehran local time, and trade-server time were observed at the same event. The trade-server clock was consistent with approximately UTC+03:00. The observation identified `LiteFinance Global LLC / LiteFinance-MT5-Live`.
+- broker: `LiteFinance Global LLC`
+- server: `LiteFinance-MT5-Live`
+- timestamp semantics: `utc_from_metatrader5_python_api`
+- digits: `2`
+- point/tick size: `0.01`
+- tick value: `1.0`
+- contract size: `100`
 
-This evidence is **not sufficient for verification** because the current `XAUUSD_o` bundle is not independently bound to that terminal/server and the applicable DST history is not proven. Therefore:
+H1/M15/M5 bars have zero duplicate timestamps, zero out-of-order rows and zero OHLC integrity errors. Cross-timeframe reconstruction is exact on all complete compared groups:
 
-- candidate offset: `UTC+03:00`;
-- authoritative conversion of the current bundle: blocked;
-- London/New York/Asia session labels: blocked;
-- `source_calendar_day_v1` remains the safe neutral grouping.
+- M5 → M15: `11,724 / 11,724`
+- M5 → H1: `2,911 / 2,911`
+- M15 → H1: `2,937 / 2,937`
 
-## First operational real-data application
+The two-day BID tick overlap is price-consistent with one preserved warning at `2026-09-04 01:00 UTC`: high/low/close match the rate bars, but the first returned BID tick is `4473.78` while the exported bar open is `4474.40`. Raw tick-record count also differs from bar `tick_volume` in a subset of intervals, so those two quantities are not treated as semantically interchangeable.
 
-The operational TPO engine was smoke-tested against the real user export `XAUUSD_o_M5_202603230005_202609030920.csv` using the already-qualified cutoff `2026-09-03 09:22:00.092` source-local.
+**Verdict:** `UTC-TIMEBASE-VERIFIED; MULTI-TIMEFRAME-PRICE-QUALIFIED; TICK-RECONSTRUCTION-WITH-WARNINGS`.
 
-The adapter uses `config/session-policies/source-calendar-day.yaml`:
+## Session consequence
 
-- `session_id = source-day:YYYY-MM-DD`;
-- no authoritative timezone, DST, London, New York, Asia, exchange-session, or broker-business-day semantics are inferred;
-- bar closure is determined only by `bar_start + timeframe <= explicit_cutoff`;
-- the supplied `0.10` profile increment is recorded as a research parameter, not asserted as instrument tick size.
+The canonical UTC bundle makes the data timestamp basis explicit, so named-session research no longer depends on inferred broker-chart timezone.
 
-For `source-day:2026-09-03`, the observed M5 segment contains 100 closed bars from 01:00 through 09:15. The 09:20 bar is forming at cutoff and contributes zero occupancy. No internal M5 gaps exist inside that observed segment. Full provenance and descriptive occupancy diagnostics are recorded in `data/reports/XAUUSD_o_M5_20260903.source-day-tpo.md`.
+Named London/New York/Asia or ICT kill-zone use still requires a **separate explicit policy** that freezes:
 
-This proves deterministic real-data execution of the operational engine; it does **not** create named-session or trading/backtest evidence.
+- the intended session concept;
+- IANA timezone;
+- DST behavior;
+- exact start/end boundaries;
+- inclusion/exclusion rule at boundaries;
+- holiday/early-close treatment where relevant.
 
-## Knowledge and rule states
+No such named-session policy is silently embedded in the exporter or TPO engine.
 
-Concept-ingestion states:
+## Legacy source-local bundle boundary
 
-`source_indexed → source_noted → defined → operational_candidate → operational → backtest_ready → validated`
-
-Operationalization readiness is audited separately as:
-
-`blocked → candidate → operational → backtest_ready`
-
-Timebase states are audited separately as:
-
-`unresolved → candidate → verified`
-
-A `candidate` timebase is allowed for sensitivity analysis only; named-session use requires `verified`.
+The older `xauusd_o_mtf_20260903_0922` remains a `candidate` timebase because its original export metadata was not captured. The new UTC bundle is a separate verified dataset and does not alter the historical truth status of the old files.
 
 ## First operational rule
 
 `amt_tpo_profile_core_v1` is implemented in `research_core/tpo_profile.py` and frozen in `quant/operational/AMT_TPO_PROFILE_CORE.yaml`.
 
-The implementation review confirms:
-
-- closed bars only;
-- forming bars are strict no-ops;
-- externally supplied session IDs only;
-- no timezone/DST inference inside the engine;
-- Decimal-based integer-tick normalization;
-- inclusive normalized low/high occupancy;
-- strict closed-timestamp ordering;
-- duplicate prevention;
-- incomplete-session marking when an upstream gap is declared;
-- no POC, Value Area, initiative/responsive, entry/exit, profitability, centralized-volume, or dealer-inventory claim.
+The implementation enforces closed bars only, forming-bar no-op behavior, externally supplied session IDs, Decimal/integer-tick normalization, strict timestamp ordering, incomplete-session marking on upstream gaps, and no POC/Value Area/entry/exit/centralized-volume/dealer-inventory claims.
 
 ## Current blocked areas
 
-- RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe, and forming-bar rules.
+- RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe and forming-bar rules.
 - Dealer/microstructure concepts remain blocked until measurable observable proxies and lag/sampling policies are frozen.
-- AMT acceptance/rejection remains blocked until measurement window, threshold, confirmation, and verified XAUUSD session/timebase policy are source-frozen.
-- Named XAUUSD sessions remain blocked until the candidate UTC+03:00 mapping is bound to the exact current export source and DST/session provenance is verified.
-
-## What “complete” means here
-
-A project component is operationally complete when it has:
-
-1. a documented purpose and evidence boundary;
-2. a stable file/schema/interface;
-3. validation rules;
-4. provenance requirements;
-5. a reproducible workflow or template;
-6. no invented historical content.
-
-Operational completeness does not mean all historical content has been recovered or that every framework concept is already validated.
+- AMT acceptance/rejection remains blocked until measurement window, threshold and confirmation rules are source-frozen.
+- Named XAUUSD session policies are not yet frozen even though the new UTC dataset is now eligible for them.
+- Long-history transaction-cost backtesting still requires a frozen historical spread/slippage/fill model; two-day BID/ASK ticks do not by themselves qualify 180 days of execution costs.
 
 ## Hard blockers that cannot be solved by inference
 
@@ -145,12 +120,11 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 ## Current next workstream
 
-1. bind timebase evidence directly to the exact current XAUUSD export source using terminal/export metadata;
-2. establish the applicable server DST policy/history;
-3. only then define named London/New York/Asia session policies;
+1. freeze explicit UTC/IANA named-session policies without embedding strategy assumptions;
+2. validate DST and boundary behavior with deterministic tests;
+3. apply the operational TPO engine to those named sessions only after policy validation;
 4. continue authoritative framework source extraction and operationalization independently;
-5. keep `amt_tpo_profile_core_v1` descriptive until a downstream Strategy Specification defines how it is used;
-6. backtest only after dataset timebase, execution model, costs, IS/OOS, lookahead, and robustness controls are explicit.
+5. backtest only after Strategy Specification, execution model, costs, IS/OOS, lookahead and robustness controls are explicit.
 
 ## Quality gate
 
