@@ -1,0 +1,95 @@
+version: 1
+operational_rule_id: amt_tpo_profile_core_v1
+concept_id: amt_market_profile_core
+framework: auction_market_theory
+state: operational
+source_candidate_path: quant/candidates/AMT_TPO_PROFILE_CORE.yaml
+implementation_path: research_core/tpo_profile.py
+test_path: tests/test_tpo_profile.py
+
+source_boundary:
+  interpretation_label: project_operational_interpretation
+  statement: >-
+    This rule is a deterministic time-at-price occupancy implementation derived from the
+    source-supported price/time organization concept. It is not represented as a canonical
+    Dalton/CME POC, Value Area, initiative/responsive, or trading-entry formula.
+
+input_contract:
+  price_increment:
+    required: true
+    rule: positive numeric value supplied explicitly by dataset/instrument metadata
+  bar_fields:
+    required:
+      - timestamp
+      - low
+      - high
+      - close_status
+      - session_id
+    optional:
+      - gap_before
+
+clock_and_ordering:
+  event_clock: closed_bar_arrival
+  closed_timestamp_order: strictly_increasing
+  forming_bar_effect: none
+  forming_bar_may_reappear_closed_at_same_timestamp: true
+
+price_normalization:
+  arithmetic: decimal_string_conversion
+  tick_index: round_half_up(price / price_increment)
+  occupancy: all integer ticks from normalized low_tick through normalized high_tick inclusive
+  rationale: deterministic project implementation choice; not claimed as source-canonical profile binning
+
+session_policy:
+  mode: externally_supplied_session_id
+  reset: reset current profile when session_id changes
+  timezone_inference: prohibited
+  dst_inference: prohibited
+
+missing_data_policy:
+  detection: external provenance/validation layer may set gap_before=true
+  effect: retain observed occupancy and mark current session incomplete
+  downstream_rule: incomplete profile may not be treated as fully-qualified session evidence
+
+state:
+  - session_id
+  - bins
+  - observed_session_low_tick
+  - observed_session_high_tick
+  - bars_seen
+  - incomplete
+  - incomplete_reasons
+  - last_closed_timestamp
+
+invariants:
+  - forming bars never change profile state
+  - a closed timestamp is counted at most once
+  - future bars are never read
+  - session changes reset current-session occupancy
+  - missing or empty session_id is invalid
+  - non-positive price_increment is invalid
+  - normalized high_tick below low_tick is invalid
+
+explicitly_not_in_scope:
+  - POC
+  - Value Area
+  - initiative activity
+  - responsive activity
+  - entry signal
+  - exit signal
+  - profitability claim
+  - centralized volume claim
+  - dealer inventory inference
+
+promotion_evidence:
+  deterministic_unit_tests:
+    - inclusive closed-bar binning
+    - forming-bar no-op then same timestamp close
+    - session reset
+    - duplicate/out-of-order rejection
+    - incomplete-profile gap flag
+  lookahead_gate: repository static audit must remain clean
+  dataset_application_constraint: >-
+    Application to a named market/session still requires explicit session policy and provenance;
+    the current qualified XAUUSD bundle does not acquire a London/NY/Asia session interpretation
+    merely because this generic engine is operational.
