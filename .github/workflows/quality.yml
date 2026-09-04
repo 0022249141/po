@@ -19,5 +19,7 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Validate source registry
         run: python tools/validate_registry.py
+      - name: Validate framework ingestion
+        run: python tools/validate_framework_ingestion.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
