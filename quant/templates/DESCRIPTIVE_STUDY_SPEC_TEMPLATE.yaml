@@ -1,0 +1,64 @@
+version: 1
+study_id: STUDY-...
+status: draft  # draft | frozen | superseded
+study_type: descriptive
+owner: ""
+frozen_at_utc: null
+
+research_question: ""
+
+data:
+  market: ""
+  symbol: ""
+  dataset_id: ""
+  dataset_manifest: ""
+  timeframe: ""
+  input_timebase: verified_utc
+  cutoff_utc: ""
+  closed_bars_only: true
+
+session_context:
+  policy_id: ""
+  policy_path: ""
+  sessions: []
+  selection:
+    completeness_mode: complete_only
+    exclude_coverage_edges: true
+
+operational_input:
+  rule_id: ""
+  rule_path: ""
+  price_increment: ""
+
+features: []
+summary_statistics: []
+
+sample_policy:
+  primary_sessions: []
+  secondary_descriptive_sessions: []
+  minimum_primary_n: 30
+  underpowered_action: descriptive_only
+
+comparison_policy:
+  pairwise_primary_only: true
+  no_parameter_tuning_after_results: true
+  no_hypothesis_rewrite_after_results: true
+
+causality_policy:
+  forming_bars_prohibited: true
+  future_data_prohibited: true
+  session_boundary_inference_prohibited: true
+  missing_data_boundary_shift_prohibited: true
+
+interpretation_boundaries:
+  descriptive_only: true
+  trading_signal_prohibited: true
+  profitability_claim_prohibited: true
+  poc_value_area_prohibited: true
+  ict_kill_zone_substitution_prohibited: true
+  centralized_volume_claim_prohibited: true
+  dealer_inventory_claim_prohibited: true
+
+change_control:
+  frozen_spec_is_immutable: true
+  any_rule_change_requires_new_version: true
