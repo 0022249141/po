@@ -1,0 +1,101 @@
+version: 1
+study_id: xauusd_named_session_tpo_descriptive_v1
+status: frozen
+study_type: descriptive
+owner: project
+frozen_at_utc: "2026-09-04T06:35:00Z"
+
+research_question: >-
+  On the canonical XAUUSD_o M5 UTC dataset, how do complete London and New York research-session
+  instances differ descriptively in range and TPO occupancy measures under the frozen major-hub
+  session policy, while Asia/Tokyo is reported as secondary descriptive context because its complete
+  sample is materially smaller on this feed?
+
+data:
+  market: XAUUSD
+  symbol: XAUUSD_o
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  input_timebase: verified_utc
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  closed_bars_only: true
+
+session_context:
+  policy_id: xauusd_major_fx_sessions_v1
+  policy_path: config/session-policies/xauusd-major-sessions.yaml
+  sessions:
+    - asia_tokyo
+    - london
+    - new_york
+  selection:
+    completeness_mode: complete_only
+    exclude_coverage_edges: true
+
+operational_input:
+  rule_id: amt_tpo_profile_core_v1
+  rule_path: quant/operational/AMT_TPO_PROFILE_CORE.yaml
+  price_increment: "0.01"
+
+features:
+  - range_ticks
+  - occupied_bins
+  - occupancy_events
+  - mean_bin_occupancy
+  - bars_seen
+
+feature_definitions:
+  range_ticks: observed_session_high_tick - observed_session_low_tick
+  occupied_bins: count of TPO bins with occupancy greater than zero
+  occupancy_events: sum of all TPO bin occupancy counts
+  mean_bin_occupancy: occupancy_events / occupied_bins
+  bars_seen: number of closed bars admitted to the session profile
+
+summary_statistics:
+  - n
+  - min
+  - q25
+  - median
+  - q75
+  - max
+  - mean
+
+sample_policy:
+  primary_sessions:
+    - london
+    - new_york
+  secondary_descriptive_sessions:
+    - asia_tokyo
+  minimum_primary_n: 30
+  underpowered_action: descriptive_only
+
+comparison_policy:
+  pairwise_primary_only: true
+  primary_pair:
+    - london
+    - new_york
+  pairwise_outputs:
+    - median_difference
+    - median_ratio
+  no_parameter_tuning_after_results: true
+  no_hypothesis_rewrite_after_results: true
+  statistical_significance_test: none
+
+causality_policy:
+  forming_bars_prohibited: true
+  future_data_prohibited: true
+  session_boundary_inference_prohibited: true
+  missing_data_boundary_shift_prohibited: true
+
+interpretation_boundaries:
+  descriptive_only: true
+  trading_signal_prohibited: true
+  profitability_claim_prohibited: true
+  poc_value_area_prohibited: true
+  ict_kill_zone_substitution_prohibited: true
+  centralized_volume_claim_prohibited: true
+  dealer_inventory_claim_prohibited: true
+
+change_control:
+  frozen_spec_is_immutable: true
+  any_rule_change_requires_new_version: true
