@@ -78,6 +78,15 @@ def _parse_aware_utc(value: datetime | str, field_name: str) -> datetime:
     return parsed.astimezone(UTC)
 
 
+def _extract_row_utc(row: dict[str, Any]) -> datetime:
+    normalized = _norm_row(row)
+    for name in ("time_utc", "timestamp_utc"):
+        value = normalized.get(name)
+        if value is not None and str(value).strip():
+            return _parse_aware_utc(str(value), name)
+    return _parse_aware_utc(extract_timestamp(row), "row timestamp")
+
+
 def _iter_local_dates(start: date, end: date) -> Iterable[date]:
     current = start
     while current <= end:
@@ -93,8 +102,6 @@ def _expected_opens(start: datetime, end: datetime, interval: timedelta) -> list
     while current < end:
         result.append(current)
         current += interval
-    if result and result[-1] >= end:
-        raise AssertionError("session expected-open construction crossed end boundary")
     return result
 
 
@@ -125,10 +132,7 @@ def _collect_instances(
     previous: datetime | None = None
 
     for raw in rows:
-        ts = extract_timestamp(raw)
-        if ts.tzinfo is None or ts.utcoffset() is None:
-            raise ValueError("named-session adapter requires timezone-aware UTC input timestamps")
-        ts_utc = ts.astimezone(UTC)
+        ts_utc = _extract_row_utc(raw)
         if previous is not None and ts_utc <= previous:
             raise ValueError("input timestamps must be strictly increasing")
         previous = ts_utc
@@ -216,6 +220,7 @@ def build_named_session_tpo(
 
     output_instances: list[dict[str, Any]] = []
     excluded = {"coverage_edge": 0, "incomplete": 0}
+    interval = timedelta(seconds=TIMEFRAME_SECONDS[input_meta["timeframe"]])
 
     for instance in instances:
         missing = instance.missing_opens
@@ -227,12 +232,9 @@ def build_named_session_tpo(
             continue
 
         engine = TPOProfileEngine(price_increment)
-        if missing:
-            engine.mark_incomplete("session_missing_expected_bars")
-
         previous: datetime | None = None
         for ts_utc, raw in sorted(instance.observed_rows, key=lambda item: item[0]):
-            gap_before = previous is not None and ts_utc - previous > timedelta(seconds=TIMEFRAME_SECONDS[input_meta["timeframe"]])
+            gap_before = previous is not None and ts_utc - previous > interval
             engine.update(
                 TPOBar(
                     timestamp=ts_utc,
@@ -244,6 +246,8 @@ def build_named_session_tpo(
                 )
             )
             previous = ts_utc
+        if missing and instance.observed_rows:
+            engine.mark_incomplete("session_missing_expected_bars")
 
         profile = engine.snapshot() if instance.observed_rows else None
         output_instances.append(
