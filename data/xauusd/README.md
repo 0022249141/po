@@ -81,7 +81,7 @@ Tick BID reconstruction is exact for 550/551 M5 bars, 182/183 M15 bars and 44/45
 
 ## Named major-hub session policy
 
-The canonical UTC dataset now has an explicit, separately validated context policy:
+The canonical UTC dataset has an explicit, separately validated context policy:
 
 - protocol: `docs/NAMED_SESSION_POLICY_PROTOCOL.md`
 - policy: `config/session-policies/xauusd-major-sessions.yaml`
@@ -103,19 +103,48 @@ Canonical M5 completeness audit:
 - London: 129 evaluable; 128 complete, 1 incomplete
 - New York: 129 evaluable; 126 complete, 3 incomplete
 
-Missing bars do not move session boundaries. Holiday or early-close labels are not inferred from absence alone. Future session-conditioned backtests should default to `complete_only` unless the Strategy Specification explicitly selects another missing-data policy.
+Missing bars do not move session boundaries. Holiday or early-close labels are not inferred from absence alone.
 
-## Operational TPO real-data smoke test
+## Named-session dataset adapter
 
-The first operational framework engine applied to real XAUUSD data is `amt_tpo_profile_core_v1` through the neutral source-day adapter:
+The session policy is now connected to a dataset adapter:
+
+- protocol: `docs/NAMED_SESSION_DATASET_PROTOCOL.md`
+- adapter: `research_core/named_session_dataset.py`
+- CLI: `tools/run_named_session_tpo.py`
+- real-data report: `data/reports/XAUUSD_o_UTC_20260904_052959.named-session-tpo.md`
+
+The adapter classifies each session instance independently as:
+
+- `complete`;
+- `incomplete` with exact missing bar-open timestamps;
+- `coverage_edge` when dataset start/cutoff truncates the window.
+
+Project default for backtest-facing data is `complete_only` with coverage edges excluded. `allow_incomplete_with_flag` is available for diagnostic/descriptive studies and never upgrades an incomplete session to complete.
+
+Canonical M5 named-session TPO smoke test, using the bound XAUUSD_o price increment `0.01`:
+
+| Latest complete instance | Closed M5 bars | Observed low | Observed high |
+|---|---:|---:|---:|
+| `asia_tokyo:2026-03-27` | 108 | 4375.58 | 4475.04 |
+| `london:2026-09-03` | 108 | 4418.79 | 4495.23 |
+| `new_york:2026-09-03` | 108 | 4419.06 | 4510.78 |
+
+The Tokyo complete-only sample is materially smaller than London/New York on this feed. Cross-session studies must therefore report sample-size asymmetry and must not assume equal observation quality.
+
+The generated profiles are descriptive time-at-price occupancy only. They do **not** define POC, Value Area, ICT kill zones, entries/exits or profitability.
+
+## Neutral source-day TPO smoke test
+
+The earlier `amt_tpo_profile_core_v1` smoke test remains preserved for the legacy source-local bundle:
 
 - engine: `research_core/tpo_profile.py`
-- adapter: `research_core/tpo_dataset_adapter.py`
+- neutral adapter: `research_core/tpo_dataset_adapter.py`
 - neutral session policy: `config/session-policies/source-calendar-day.yaml`
 - CLI: `tools/run_source_day_tpo.py`
 - report: `data/reports/XAUUSD_o_M5_20260903.source-day-tpo.md`
 
-The existing smoke test uses the older source-local bundle and remains a technical source-calendar-date grouping only. It proves deterministic engine execution, not named-session semantics. The next TPO application should use the canonical UTC bundle, the named-session policy and explicit per-session completeness flags.
+That test remains a technical source-calendar-date grouping only. Named-session research should use the canonical UTC dataset and the named-session adapter instead.
 
 ## Validation checklist
 
@@ -129,6 +158,7 @@ The existing smoke test uses the older source-local bundle and remains a technic
 - gaps and duplicates
 - session boundaries
 - session completeness
+- coverage-edge policy
 - resampling method
 - transaction-cost assumptions
 
@@ -136,7 +166,9 @@ The existing smoke test uses the older source-local bundle and remains a technic
 
 Dukascopy remains an intended independent historical benchmark against broker/MT5 data. Differences between feeds must be measured rather than assumed negligible.
 
-The canonical UTC bundle removes the timestamp-timezone and broker/symbol binding blocker for new research. It does **not** by itself provide centralized exchange volume, DOM/CVD, dealer inventory, or a 180-day tick-level execution-cost history. Long-history cost-sensitive testing still requires an explicit spread/slippage/fill model and separate robustness checks.
+The canonical UTC bundle removes the timestamp-timezone and broker/symbol binding blocker for new research. Named-session conditioning is now deterministic, but a backtest still requires a frozen Strategy Specification that selects permitted sessions, completeness policy, execution timing, costs, IS/OOS procedure and robustness criteria.
+
+The canonical bundle does **not** provide centralized exchange volume, DOM/CVD, dealer inventory, or a 180-day tick-level execution-cost history. Long-history cost-sensitive testing still requires an explicit spread/slippage/fill model and separate robustness checks.
 
 ## TradingView role
 
