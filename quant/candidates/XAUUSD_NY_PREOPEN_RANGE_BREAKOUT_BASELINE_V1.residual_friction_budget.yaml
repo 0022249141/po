@@ -1,0 +1,68 @@
+version: 1
+budget_id: xauusd_ny_preopen_range_breakout_baseline_v1_residual_friction_budget
+status: frozen
+budget_class: post_spread_uniform_extra_round_trip_price_budget
+frozen_at_utc: "2026-09-04T09:45:00Z"
+
+purpose: >-
+  Quantify the maximum additional uniform round-trip price friction that the already-recorded
+  observed-median spread case can absorb before aggregate expectancy reaches zero. This is a
+  diagnostic execution-cost budget, not a new trading rule, not a tuned scenario grid, and not a
+  substitute for measured historical commission or slippage.
+
+binding:
+  strategy_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml
+  evaluation_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.evaluation.yaml
+  gross_result_path: quant/results/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.gross.result.yaml
+  spread_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.spread_sensitivity.yaml
+  spread_result_path: quant/results/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.spread.result.yaml
+  dataset_id: xauusd_o_utc_20260904_052959
+  symbol: XAUUSD_o
+  point_size: 0.01
+  primary_spread_scenario: observed_median_fixed
+  primary_spread_points: 22.0
+
+method:
+  input_required: full_external_gross_trade_ledger
+  base_adjusted_R: gross_R_minus_primary_spread_price_divided_by_initial_risk
+  extra_round_trip_price_friction_symbol: x
+  extra_cost_R_per_trade: x_divided_by_initial_risk
+  adjusted_R_with_extra_friction: base_adjusted_R_minus_x_divided_by_initial_risk
+  break_even_extra_price_formula: sum_base_adjusted_R_divided_by_sum_inverse_initial_risk
+  break_even_extra_points_formula: break_even_extra_price_divided_by_point_size
+  strict_positive_edge_condition: extra_round_trip_price_friction_less_than_break_even_extra_price
+  profit_factor_break_even_relation: >-
+    For the unchanged trade set and additive friction model, profit factor equals one exactly when
+    aggregate net R equals zero; therefore the same break-even extra-price threshold applies to the
+    PF>1 and expectancy>0 boundaries.
+
+execution_path:
+  signal_path_recomputed: false
+  bid_ask_stop_path_recomputed: false
+  commission_measured: false
+  slippage_measured: false
+  historical_full_sample_spread_calibrated: false
+
+reporting:
+  trade_count_required: true
+  base_primary_spread_expectancy_R_required: true
+  base_primary_spread_profit_factor_required: true
+  sum_inverse_initial_risk_required: true
+  break_even_extra_price_required: true
+  break_even_extra_points_required: true
+  total_break_even_round_trip_points_required: true
+  initial_risk_summary_required: true
+
+interpretation_boundaries:
+  diagnostic_budget_only: true
+  no_cost_scenario_tuning: true
+  no_signal_rule_changes: true
+  not_measured_commission: true
+  not_measured_slippage: true
+  not_full_execution_path_backtest: true
+  net_profitability_not_established: true
+  live_trading_prohibited: true
+
+change_control:
+  frozen_budget_spec_is_immutable: true
+  any_method_change_requires_new_version: true
