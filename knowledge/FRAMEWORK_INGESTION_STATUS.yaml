@@ -74,7 +74,7 @@ frameworks:
       - dalton_mind_over_markets
       - dalton_markets_in_profile
       - cme_market_profile_education
-    status: operational_candidate_partial
+    status: operational_partial
     independent_definition_required: true
     verified_artifacts:
       - source-notes/cme-dalton-market-profile-verified.md
@@ -82,10 +82,11 @@ frameworks:
       - definitions.md
     defined_concepts:
       - amt_price_acceptance_rejection
-    operational_candidate_concepts:
+    operational_concepts:
       - amt_market_profile_core
-    operational_candidate_artifacts:
-      - ../../quant/candidates/AMT_TPO_PROFILE_CORE.yaml
+    operational_artifacts:
+      - ../../quant/operational/AMT_TPO_PROFILE_CORE.yaml
+      - ../../research_core/tpo_profile.py
     named_concepts:
       - Value Area
       - POC
