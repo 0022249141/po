@@ -7,7 +7,9 @@
 
 The repository is **operationally complete as a research core**: it can register sources, validate data, create provenance manifests, qualify multi-timeframe OHLC/tick bundles, audit common lookahead patterns, define/freeze strategy specifications, summarize backtest trade results, and expose compact curated artifacts for retrieval.
 
-Framework ingestion infrastructure is now active under `docs/FRAMEWORK_INGESTION_PROTOCOL.md` and `knowledge/FRAMEWORK_INGESTION_STATUS.yaml`. Native-framework isolation and promotion states prevent unverified cross-framework substitutions from becoming project truth.
+Framework ingestion infrastructure is active under `docs/FRAMEWORK_INGESTION_PROTOCOL.md`, `knowledge/FRAMEWORK_INGESTION_STATUS.yaml`, and `knowledge/CONCEPT_REGISTRY.yaml`. Native-framework isolation and promotion states prevent unverified cross-framework substitutions from becoming project truth.
+
+Operationalization governance is now active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. Defined concepts are audited separately for machine readiness before they may become operational candidates.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -17,11 +19,13 @@ The repository is **not historically complete** because several pre-existing art
 |---|---:|---:|
 | Canonical architecture | COMPLETE | COMPLETE |
 | Source registry & policy | COMPLETE | COMPLETE for mapped source metadata |
-| Framework ingestion protocol | COMPLETE | ACTIVE — source-faithful ingestion pending |
-| ICT/SMC/Wyckoff framework | COMPLETE shell + rule ledger | PARTIAL — authoritative content ingestion pending |
-| RTM framework | COMPLETE shell + rule ledger | PARTIAL — authoritative content ingestion pending; `rtm-fshcd` missing |
-| Dealer microstructure | COMPLETE shell + concept ledger | PARTIAL — source notes/model mappings pending |
-| Auction Market Theory | COMPLETE shell + rule ledger | PARTIAL — authoritative source notes pending |
+| Framework ingestion protocol | COMPLETE | ACTIVE — source-faithful ingestion ongoing |
+| Concept registry / definition gate | COMPLETE | PARTIAL — source-supported definitions only |
+| Operationalization gate | COMPLETE | ACTIVE — no machine-ready framework rule promoted without unresolved fields being closed |
+| ICT/SMC/Wyckoff framework | COMPLETE shell + rule ledger | PARTIAL — official market-structure and Wyckoff scope notes exist; detailed rule extraction pending |
+| RTM framework | COMPLETE shell + rule ledger | PARTIAL — valid-swing definition captured; FTR/BSZ/MPL/Quasimodo/Compression rules pending; `rtm-fshcd` missing |
+| Dealer microstructure | COMPLETE shell + definition layer | PARTIAL — theory concepts defined; observable proxies not frozen |
+| Auction Market Theory | COMPLETE shell + definition layer | PARTIAL — Market Profile core and acceptance/rejection defined; canonical POC/Value Area/session algorithms pending |
 | XAUUSD data layer | COMPLETE | MULTI-TIMEFRAME QUALIFIED bundle exists with timebase/source warnings |
 | MTF qualification engine | COMPLETE | VERIFIED on H1/M15/M5/Tick bundle |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
@@ -36,13 +40,27 @@ The registered `XAUUSD_o` H1/M15/M5/Tick bundle has exact internal OHLC aggregat
 
 It is not yet promoted to fully qualified backtest data because exact broker/feed identity, server timezone/DST policy, symbol point/contract metadata, session calendar, and one small tick-count discrepancy remain unresolved.
 
-## Framework ingestion states
+## Knowledge and rule states
 
-Concepts advance only through:
+Concept-ingestion states:
 
 `source_indexed → source_noted → defined → operational_candidate → operational → backtest_ready → validated`
 
-A concept may remain `rejected_or_unresolved` when source ambiguity or irreducible discretion prevents promotion.
+Operationalization readiness is audited separately as:
+
+`blocked → candidate → operational → backtest_ready`
+
+A `defined` concept does not become a candidate until all machine-rule dependencies are explicit. A concept may remain blocked or `rejected_or_unresolved` when source ambiguity, missing observables, or irreducible discretion prevents promotion.
+
+## Current operationalization findings
+
+The first readiness audit intentionally promotes **no framework rule** to machine-ready status yet.
+
+- RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe, and forming-bar rules.
+- Dealer/microstructure concepts remain blocked until measurable observable proxies and lag/sampling policies are frozen.
+- Market Profile / acceptance-rejection remains blocked until profile construction, session/timezone, POC/Value Area, and acceptance-threshold rules are source-frozen.
+
+This is a quality-control outcome, not a project failure: the gate is preventing plausible but unsupported chart rules from being mislabeled as canonical or backtest-ready.
 
 ## What “complete” means here
 
@@ -75,11 +93,11 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 ## Current next workstream
 
-1. ingest authoritative framework sources with exact provenance;
-2. build native definitions before cross-framework comparison;
-3. operationalize only rules that can be specified without visual hindsight;
+1. continue authoritative source extraction at exact passage/video-timestamp/chapter-page level;
+2. close operationalization blockers concept-by-concept without cross-framework substitution;
+3. promote only source-supported machine rules to `operational_candidate`;
 4. freeze Strategy Specifications before implementation;
-5. backtest operational rules in the Quant layer with IS/OOS and robustness controls.
+5. backtest operational rules in the Quant layer with IS/OOS, cost, lookahead, and robustness controls.
 
 ## Quality gate
 
