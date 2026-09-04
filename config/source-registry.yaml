@@ -1,0 +1,187 @@
+registry_version: 1
+canonical_map: docs/resource-connector-map.md
+reviewed: 2026-09
+
+sources:
+  - id: ict_official_youtube
+    category: ict_smc_wyckoff
+    name: Inner Circle Trader YouTube
+    url: https://youtube.com/@innercircletrader
+    class: official_practitioner
+    role: primary_concept_source
+    ingest_status: planned
+
+  - id: ict_official_x
+    category: ict_smc_wyckoff
+    name: Inner Circle Trader X
+    url: https://x.com/I_Am_The_ICT
+    class: official_practitioner
+    role: primary_concept_source
+    ingest_status: planned
+
+  - id: wyckoff_analytics
+    category: ict_smc_wyckoff
+    name: Wyckoff Analytics
+    url: https://www.wyckoffanalytics.com
+    class: official_education
+    role: primary_wyckoff_source
+    ingest_status: planned
+
+  - id: ggu_fi354
+    category: ict_smc_wyckoff
+    name: Golden Gate University FI-354
+    class: academic_course_reference
+    role: wyckoff_course_reference
+    ingest_status: metadata_only
+
+  - id: readthemarket
+    category: rtm
+    name: Read The Market
+    url: https://readthemarket.com
+    class: official_practitioner
+    role: primary_rtm_source
+    ingest_status: planned
+
+  - id: rtm_academy
+    category: rtm
+    name: RTM Academy
+    url: https://www.rtmacademy.com
+    class: official_practitioner
+    role: structured_rtm_source
+    ingest_status: planned
+
+  - id: kyle_1985
+    category: dealer_microstructure
+    name: Kyle 1985
+    class: academic_paper
+    role: informed_trading_market_microstructure
+    ingest_status: bibliographic_record_required
+
+  - id: glosten_milgrom_1985
+    category: dealer_microstructure
+    name: Glosten-Milgrom 1985
+    class: academic_paper
+    role: informed_trading_spread_microstructure
+    ingest_status: bibliographic_record_required
+
+  - id: ho_stoll_1981
+    category: dealer_microstructure
+    name: Ho & Stoll 1981
+    class: academic_paper
+    role: dealer_inventory_risk
+    ingest_status: bibliographic_record_required
+
+  - id: grossman_miller_1988
+    category: dealer_microstructure
+    name: Grossman-Miller 1988
+    class: academic_paper
+    role: liquidity_market_making
+    ingest_status: bibliographic_record_required
+
+  - id: arxiv_2003_05958
+    category: dealer_microstructure
+    name: Optimal Market Making with Persistent Order Flow
+    url: https://arxiv.org/abs/2003.05958
+    class: academic_preprint
+    role: quantitative_market_making_inspiration
+    ingest_status: planned
+
+  - id: arxiv_2407_17393
+    category: dealer_microstructure
+    name: arXiv 2407.17393
+    url: https://arxiv.org/abs/2407.17393
+    class: academic_preprint
+    role: quantitative_inspiration
+    ingest_status: planned
+
+  - id: dalton_mind_over_markets
+    category: auction_market_theory
+    name: Mind Over Markets
+    author: James Dalton
+    class: book
+    role: market_profile_reference
+    ingest_status: bibliographic_record_required
+
+  - id: dalton_markets_in_profile
+    category: auction_market_theory
+    name: Markets in Profile
+    author: James Dalton
+    class: book
+    role: market_profile_reference
+    ingest_status: bibliographic_record_required
+
+  - id: cme_market_profile_education
+    category: auction_market_theory
+    name: CME Group Market Profile Education
+    url: https://www.cmegroup.com
+    class: exchange_education
+    role: official_market_profile_education
+    ingest_status: planned
+
+  - id: tgju_melted_gold
+    category: iran_gold_data
+    name: TGJU Melted Gold
+    url: https://www.tgju.org
+    class: market_data_web
+    role: realtime_cross_check
+    ingest_status: connector_or_extraction_not_built
+
+  - id: general_platforms_csv
+    category: iran_gold_data
+    name: general-platforms CSV feed
+    class: user_data_format
+    role: primary_intraday_feed_per_canonical_map
+    ingest_status: sample_missing
+
+  - id: dukascopy_xauusd
+    category: xauusd_data
+    name: Dukascopy Historical Data
+    url: https://www.dukascopy.com
+    class: market_data
+    role: historical_tick_minute_backtest
+    ingest_status: planned
+
+  - id: tradingview
+    category: xauusd_data
+    name: TradingView
+    class: charting_and_community_code
+    role: visual_cross_check_and_open_source_logic_review
+    ingest_status: planned
+
+  - id: tradingeconomics_api
+    category: macro_data
+    name: TradingEconomics API
+    url: https://tradingeconomics.com/api
+    class: macro_event_data
+    role: time_logic_volatility_state
+    ingest_status: planned
+
+  - id: forexfactory_calendar
+    category: macro_data
+    name: ForexFactory Calendar
+    url: https://www.forexfactory.com/calendar
+    class: macro_event_calendar
+    role: time_logic_volatility_state
+    ingest_status: planned
+
+  - id: metatrader5_python
+    category: implementation
+    name: MetaTrader5 Python package
+    class: official_software_package
+    role: optional_data_bridge_reference
+    ingest_status: reference_only
+
+  - id: mql5_articles
+    category: implementation
+    name: MQL5 Articles
+    url: https://www.mql5.com/en/articles
+    class: official_implementation_archive
+    role: code_and_backtest_reference
+    ingest_status: planned
+
+  - id: github_smc_ict_topics
+    category: implementation
+    name: GitHub smart-money-concepts / ict-trading topics
+    class: community_code
+    role: implementation_cross_check_only
+    ingest_status: planned
