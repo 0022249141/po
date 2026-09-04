@@ -37,11 +37,44 @@ datasets:
         status: blocked_without_original_export_metadata
         rule: later terminal observations cannot prove the historical source clock by themselves
       canonical_utc_reexport:
-        status: tooling_ready
+        status: resolved_by_new_dataset
         protocol: docs/MT5_UTC_EXPORT_PROTOCOL.md
         exporter: tools/export_mt5_utc_bundle.py
         validator: tools/validate_mt5_utc_bundle.py
+        new_dataset: xauusd_o_utc_20260904_052959
         effect: creates a new provenance-bound UTC dataset; does not retroactively verify this legacy bundle
+
+  xauusd_o_utc_20260904_052959:
+    source_id: user_mt5_export
+    market: xauusd
+    symbol: XAUUSD_o
+    status: verified
+    source_timestamp_semantics: utc_from_metatrader5_python_api
+    source_timezone: UTC
+    dst_policy: not_applicable_to_utc_data_timestamps
+    broker_feed_identity: LiteFinance Global LLC / LiteFinance-MT5-Live
+    named_session_use_allowed: true
+    named_session_use_condition: explicit downstream IANA timezone and DST-aware session policy required
+    bundle_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+    qualification_report: data/reports/XAUUSD_o_UTC_20260904_052959.qualification.md
+    explicit_utc_cutoff: "2026-09-04T05:29:59.763793+00:00"
+    evidence:
+      - type: direct_source_metadata
+        provenance: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+        observation: canonical exporter bound UTC semantics, broker/server, terminal, symbol metadata, cutoff and file hashes in one run
+      - type: controlled_crosscheck
+        provenance: data/reports/XAUUSD_o_UTC_20260904_052959.qualification.md
+        observation: H1/M15/M5 complete-group aggregation is exact and the two-day BID tick overlap is price-consistent except for one preserved 01:00 UTC bar-open discrepancy
+    supporting_observations:
+      - all four market-data SHA-256 values match the binding manifest
+      - H1/M15/M5 contain zero duplicate timestamps, zero out-of-order rows and zero OHLC integrity errors
+      - M5 to M15, M5 to H1 and M15 to H1 aggregation is exact on every complete compared group
+      - symbol metadata binds digits 2, point 0.01, tick size 0.01, tick value 1.0 and contract size 100
+    quality_warnings:
+      - copy_ticks_range record count is not identical to bar tick_volume on a subset of intervals
+      - one 2026-09-04 01:00 UTC tick-BID reconstruction has an open mismatch while high/low/close match
+      - centralized exchange volume, DOM and direct dealer inventory are not present
+    blockers: []
 
 rules:
   verified_requires_non_statistical_evidence: true
