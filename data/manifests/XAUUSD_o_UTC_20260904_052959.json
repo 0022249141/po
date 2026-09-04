@@ -1,0 +1,101 @@
+{
+  "dataset_id": "xauusd_o_utc_20260904_052959",
+  "market": "xauusd",
+  "symbol": "XAUUSD_o",
+  "source_id": "user_mt5_export",
+  "exporter_id": "p_mt5_utc_bundle_v1",
+  "exporter_version": "1.0.0",
+  "timestamp_semantics": "utc_from_metatrader5_python_api",
+  "export_time_utc": "2026-09-04T05:29:59.763793+00:00",
+  "broker": {
+    "company": "LiteFinance Global LLC",
+    "server": "LiteFinance-MT5-Live"
+  },
+  "terminal": {
+    "version": [500, 6140, "21 Aug 2026"],
+    "connected": true
+  },
+  "symbol_metadata": {
+    "digits": 2,
+    "point": 0.01,
+    "trade_tick_size": 0.01,
+    "trade_tick_value": 1.0,
+    "trade_contract_size": 100.0,
+    "volume_min": 0.01,
+    "volume_step": 0.01,
+    "spread_float": true,
+    "ticks_bookdepth": 0,
+    "path": "ECN_LOW_SPREAD\\Commodities\\XAUUSD_o",
+    "description": "Gold vs US Dollar"
+  },
+  "files": [
+    {
+      "path": "XAUUSD_o_H1_bars_utc.csv",
+      "kind": "ohlc",
+      "rows": 2940,
+      "first_time_utc": "2026-03-09T00:00:00Z",
+      "last_time_utc": "2026-09-04T05:00:00Z",
+      "sha256": "bbb65ed6b953c8b52e0556b916332bdfe3e29d5af2c860d0509b99431f5eb8b2",
+      "timeframe": "H1"
+    },
+    {
+      "path": "XAUUSD_o_M15_bars_utc.csv",
+      "kind": "ohlc",
+      "rows": 11753,
+      "first_time_utc": "2026-03-09T00:00:00Z",
+      "last_time_utc": "2026-09-04T05:15:00Z",
+      "sha256": "fc29ac87822e52a509abfed947f831e352a152cd1710821709913c07ea6c77c7",
+      "timeframe": "M15"
+    },
+    {
+      "path": "XAUUSD_o_M5_bars_utc.csv",
+      "kind": "ohlc",
+      "rows": 35229,
+      "first_time_utc": "2026-03-09T00:05:00Z",
+      "last_time_utc": "2026-09-04T05:25:00Z",
+      "sha256": "e3050e9b46b24cfa27df27edd7649911998dc662bb356f1715d789f232e7feca",
+      "timeframe": "M5"
+    },
+    {
+      "path": "XAUUSD_o_ticks_utc.csv",
+      "kind": "tick",
+      "rows": 655779,
+      "first_time_utc": "2026-09-02T05:29:59.017Z",
+      "last_time_utc": "2026-09-04T05:29:58.905Z",
+      "sha256": "78897dd2fba291296b06925bca119ca1defa8ae23c5f3bb6fab78b73c9ea97f2"
+    }
+  ],
+  "bundle_zip_sha256": "ff76a2d0066898ea4dda9186f273212ed4c0d0e0d98ab0e9797b760564fe9766",
+  "binding_manifest_sha256": "6cdf4a5f715628b138349d186fc5bf21db64efbfcacd7836f21a024c751fb601",
+  "quality_report_sha256": "5123516b34b7ee632e4d16cf360e8642f6d50ee03c0acdb8290676b1d9d7cf98",
+  "qualification": {
+    "bar_quality": {
+      "H1": {"rows": 2940, "duplicates": 0, "out_of_order": 0, "ohlc_errors": 0, "forming_rows": 1, "gaps": 128, "latest_closed_utc": "2026-09-04T04:00:00Z"},
+      "M15": {"rows": 11753, "duplicates": 0, "out_of_order": 0, "ohlc_errors": 0, "forming_rows": 1, "gaps": 128, "latest_closed_utc": "2026-09-04T05:00:00Z"},
+      "M5": {"rows": 35229, "duplicates": 0, "out_of_order": 0, "ohlc_errors": 0, "forming_rows": 1, "gaps": 128, "latest_closed_utc": "2026-09-04T05:20:00Z"}
+    },
+    "cross_timeframe": {
+      "M5_to_M15": {"complete_groups": 11724, "ohlc_exact": 11724, "ohlc_mismatch": 0, "tickvol_exact": 11724, "tickvol_mismatch": 0},
+      "M5_to_H1": {"complete_groups": 2911, "ohlc_exact": 2911, "ohlc_mismatch": 0, "tickvol_exact": 2911, "tickvol_mismatch": 0},
+      "M15_to_H1": {"complete_groups": 2937, "ohlc_exact": 2937, "ohlc_mismatch": 0, "tickvol_exact": 2937, "tickvol_mismatch": 0}
+    },
+    "tick_quality": {
+      "rows": 655779,
+      "duplicate_time_msc": 1,
+      "duplicate_full_rows": 0,
+      "out_of_order": 0,
+      "crossed_quotes": 0,
+      "intertick_gaps_gt_60s": 2,
+      "max_gap_seconds": 3722.643,
+      "spread_points_min": 12,
+      "spread_points_median": 22,
+      "spread_points_max": 151
+    },
+    "tick_reconstruction": {
+      "M5": {"comparable": 551, "ohlc_exact": 550, "ohlc_mismatch": 1, "tick_count_exact": 499, "tick_count_mismatch": 52},
+      "M15": {"comparable": 183, "ohlc_exact": 182, "ohlc_mismatch": 1, "tick_count_exact": 164, "tick_count_mismatch": 19},
+      "H1": {"comparable": 45, "ohlc_exact": 44, "ohlc_mismatch": 1, "tick_count_exact": 38, "tick_count_mismatch": 7}
+    },
+    "verdict": "UTC-TIMEBASE-VERIFIED; MULTI-TIMEFRAME-PRICE-QUALIFIED; TICK-RECONSTRUCTION-WITH-WARNINGS"
+  }
+}
