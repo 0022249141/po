@@ -7,26 +7,30 @@ datasets:
     source_id: user_mt5_export
     market: xauusd
     symbol: XAUUSD_o
-    status: unresolved
-    source_timestamp_semantics: source_local_unknown_timezone
+    status: candidate
+    source_timestamp_semantics: source_local_candidate_utc_plus_03
     source_timezone: null
-    utc_offset: null
-    dst_policy: null
-    broker_feed_identity: null
+    candidate_utc_offset: "+03:00"
+    dst_policy: unresolved
+    broker_feed_identity: unbound_candidate_observation_LiteFinance-MT5-Live
     named_session_use_allowed: false
     neutral_policy: source_calendar_day_v1
     bundle_manifest: data/manifests/XAUUSD_o_MTF_20260903_0922.json
     qualification_report: data/reports/XAUUSD_o_MTF_20260903_0922.qualification.md
     explicit_source_local_cutoff: "2026-09-03T09:22:00.092"
-    evidence: []
+    evidence:
+      - type: terminal_observation
+        provenance: data/evidence/XAUUSD_timebase_candidate_20260722.md
+        observation: prior LiteFinance-MT5-Live terminal clock was approximately UTC+03:00 on 2026-07-22
+        binding: not proven to be the source terminal for the current XAUUSD_o bundle
     supporting_observations:
       - exact H1/M15/M5 OHLC aggregation consistency on complete intervals
       - exact BID tick reconstruction for compared completed H1/M15/M5 bars
       - recurring daily and weekend gap patterns are recorded but are not timezone proof
     blockers:
-      - exact broker/feed identity is not provenance-confirmed
-      - source/server timezone is not provenance-confirmed
-      - DST policy is not provenance-confirmed
+      - current XAUUSD_o bundle is not independently bound to the observed LiteFinance-MT5-Live terminal
+      - exact broker/feed identity for the current export is not provenance-confirmed
+      - DST policy/history is not provenance-confirmed
       - named trading-session boundaries are therefore not authorized
 
 rules:
