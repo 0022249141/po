@@ -13,7 +13,7 @@ The first operational rule remains `amt_tpo_profile_core_v1`, a deterministic de
 
 The XAUUSD timebase blocker has been removed for the new canonical UTC bundle `xauusd_o_utc_20260904_052959`. The export run directly binds UTC timestamp semantics, LiteFinance broker/server identity, terminal metadata, symbol specification, cutoff and per-file SHA-256 values. This does **not** retroactively verify the older source-local bundle.
 
-A named-session context layer is now operational for the canonical UTC dataset under `docs/NAMED_SESSION_POLICY_PROTOCOL.md`, `config/session-policies/xauusd-major-sessions.yaml`, and `research_core/session_policy.py`. It defines explicit IANA/DST-aware Asia-Tokyo, London and New York research windows and is intentionally separate from ICT kill zones or strategy logic.
+A named-session context layer is operational under `docs/NAMED_SESSION_POLICY_PROTOCOL.md`, `config/session-policies/xauusd-major-sessions.yaml`, and `research_core/session_policy.py`. The downstream dataset-selection layer is also operational under `docs/NAMED_SESSION_DATASET_PROTOCOL.md` and `research_core/named_session_dataset.py`, with explicit `complete_only`, `allow_incomplete_with_flag`, and coverage-edge handling. These research sessions remain separate from ICT kill zones and strategy logic.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -33,8 +33,9 @@ The repository is **not historically complete** because several pre-existing art
 | XAUUSD data layer | COMPLETE | canonical UTC bundle qualified for timebase and multi-timeframe price research, with tick-history warnings |
 | Timebase qualification | COMPLETE gate + validator | VERIFIED for `xauusd_o_utc_20260904_052959` |
 | Named-session policy | COMPLETE engine + validator + CI gate | OPERATIONAL for Asia-Tokyo/London/New York research convention on verified UTC data |
-| Named-session dataset audit | COMPLETE | per-instance completeness audited on canonical M5 data |
-| TPO dataset adapter | COMPLETE | VERIFIED on real XAUUSD under neutral source-day policy; named-session TPO application pending |
+| Named-session dataset adapter | COMPLETE | OPERATIONAL with complete/incomplete/coverage-edge classification and TPO integration |
+| Named-session real-data audit | COMPLETE | VERIFIED on canonical M5; sample completeness differs materially by session |
+| TPO dataset adapters | COMPLETE | neutral source-day and canonical named-session smoke tests both verified descriptively |
 | MTF qualification engine | COMPLETE | VERIFIED on legacy and canonical H1/M15/M5 bundles |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
 | Quant research workflow | COMPLETE | STRATEGY-DEPENDENT |
@@ -91,7 +92,25 @@ Canonical M5 per-instance coverage audit is recorded in `data/reports/XAUUSD_o_U
 - London: 129 evaluable; 128 complete, 1 incomplete;
 - New York: 129 evaluable; 126 complete, 3 incomplete.
 
-Missing bars do not move session boundaries and no holiday explanation is inferred without separate calendar evidence. Future backtests should default to `complete_only` session instances unless the frozen Strategy Specification states otherwise.
+Missing bars do not move session boundaries and no holiday explanation is inferred without separate calendar evidence. Future backtests default to `complete_only` unless the frozen Strategy Specification states otherwise.
+
+## Named-session dataset / TPO milestone
+
+`research_core/named_session_dataset.py` now converts canonical verified-UTC OHLC data into explicit session instances and preserves the distinction between complete, incomplete and coverage-edge observations.
+
+Selection policies:
+
+- `complete_only` — project default for future backtests;
+- `allow_incomplete_with_flag` — diagnostic/descriptive retention with exact missing-bar metadata;
+- coverage edges excluded by default.
+
+The real-data smoke test is recorded in `data/reports/XAUUSD_o_UTC_20260904_052959.named-session-tpo.md`. Using canonical M5, cutoff `2026-09-04T05:29:59.763793Z`, and the bound XAUUSD_o tick size `0.01`, the latest complete instances profiled were:
+
+- `asia_tokyo:2026-03-27` — 108 bars, observed 4375.58–4475.04;
+- `london:2026-09-03` — 108 bars, observed 4418.79–4495.23;
+- `new_york:2026-09-03` — 108 bars, observed 4419.06–4510.78.
+
+These are descriptive occupancy profiles only. No POC, Value Area, trading signal or profitability claim is derived. The small Tokyo complete-session sample relative to London/New York is retained as a material study-design constraint.
 
 ## Legacy source-local bundle boundary
 
@@ -108,8 +127,8 @@ The implementation enforces closed bars only, forming-bar no-op behavior, extern
 - RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe and forming-bar rules.
 - Dealer/microstructure concepts remain blocked until measurable observable proxies and lag/sampling policies are frozen.
 - AMT acceptance/rejection remains blocked until measurement window, threshold and confirmation rules are source-frozen.
-- Named-session **context** is operational, but methodology-specific ICT kill zones remain separate and source-extraction work is still required.
-- Named-session TPO application still needs a dataset adapter that carries session completeness flags into downstream statistics.
+- Named-session context and dataset construction are operational, but methodology-specific ICT kill zones remain separate and source-extraction work is still required.
+- TPO remains descriptive; POC/Value Area and any trading interpretation require separately sourced/frozen operational rules.
 - Long-history transaction-cost backtesting still requires a frozen historical spread/slippage/fill model; two-day BID/ASK ticks do not by themselves qualify 180 days of execution costs.
 
 ## Hard blockers that cannot be solved by inference
@@ -130,10 +149,10 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 ## Current next workstream
 
-1. build the named-session dataset adapter with `complete_only`, `allow_incomplete_with_flag`, and coverage-edge handling;
-2. apply `amt_tpo_profile_core_v1` to complete named-session instances on canonical UTC data;
-3. keep ICT kill zones separate until their own official-source boundaries are extracted and frozen;
-4. continue authoritative framework source extraction and operationalization independently;
+1. freeze a downstream descriptive-study or Strategy Specification that selects permitted named sessions, completeness policy and TPO outputs;
+2. keep ICT kill zones separate until their own official-source boundaries are extracted and frozen;
+3. continue authoritative framework source extraction and operationalization independently;
+4. define POC/Value Area only after an authoritative source and exact algorithm are frozen;
 5. backtest only after Strategy Specification, execution model, costs, IS/OOS, lookahead and robustness controls are explicit.
 
 ## Quality gate
