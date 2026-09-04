@@ -5,6 +5,7 @@ from pathlib import Path
 from research_core.mt5_utc_bundle import (
     bar_is_closed,
     epoch_seconds_to_utc_iso,
+    gold_symbol_candidates,
     sha256_file,
     validate_utc_bundle_manifest,
 )
@@ -17,6 +18,12 @@ class MT5UTCBundleTests(unittest.TestCase):
     def test_bar_close_boundary_is_causal(self):
         self.assertFalse(bar_is_closed(1000, 300, 1299.999))
         self.assertTrue(bar_is_closed(1000, 300, 1300))
+
+    def test_gold_symbol_candidates_are_deterministic(self):
+        self.assertEqual(
+            gold_symbol_candidates(["EURUSD", "XAUUSD_o", "GOLDmicro", "XAUUSD", "XAUUSD_o"]),
+            ["XAUUSD", "XAUUSD_o", "GOLDmicro"],
+        )
 
     def test_valid_manifest_and_hash_pass(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -42,6 +49,9 @@ class MT5UTCBundleTests(unittest.TestCase):
             }
             result = validate_utc_bundle_manifest(manifest, root)
             self.assertEqual(result["status"], "pass", result)
+            self.assertEqual(result["identity"]["symbol"], "XAUUSD_o")
+            self.assertEqual(result["identity"]["broker_server"], "Server")
+            self.assertEqual(result["identity"]["file_count"], 1)
 
     def test_hash_mismatch_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
