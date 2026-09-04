@@ -1,0 +1,61 @@
+project: P
+canonical_document: docs/resource-connector-map.md
+architecture_status: active
+mcp_status: removed
+
+stages:
+  - id: canonical_map
+    status: complete
+    artifacts:
+      - docs/resource-connector-map.md
+
+  - id: repository_architecture
+    status: complete
+    artifacts:
+      - README.md
+      - docs/ARCHITECTURE.md
+      - docs/SOURCE_POLICY.md
+      - docs/IMPLEMENTATION_PLAN.md
+
+  - id: source_registry
+    status: complete
+    artifacts:
+      - config/source-registry.yaml
+
+  - id: recover_existing_assets
+    status: blocked_missing_inputs
+    tracked_in: docs/MISSING_ASSETS.md
+
+  - id: framework_ingestion
+    status: scaffolded
+    domains:
+      - ict_smc_wyckoff
+      - rtm
+      - dealer_microstructure
+      - auction_market_theory
+
+  - id: data_layer
+    status: scaffolded
+    domains:
+      - iran_gold
+      - xauusd
+      - macro_events
+
+  - id: quant_backtest
+    status: scaffolded
+    dependency: frozen_strategy_specifications
+
+  - id: curated_rag
+    status: waiting_for_source_ingestion
+    expected_artifacts:
+      - glossary.md
+      - SKILL.md
+      - MARKET_PARAMS.md
+
+  - id: chatgpt_integration
+    status: design_only
+    allowed_channels:
+      - github_connector
+      - google_drive_connector
+      - knowledge_files
+    note: No MCP server is part of the current repository architecture.
