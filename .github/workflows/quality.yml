@@ -33,5 +33,7 @@ jobs:
         run: python tools/validate_study_specs.py
       - name: Validate descriptive study results
         run: python tools/validate_study_results.py
+      - name: Validate temporal robustness specifications
+        run: python tools/validate_temporal_robustness.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
