@@ -1,0 +1,46 @@
+{
+  "dataset_id": "xauusd_o_m5_202603230005_202609030920",
+  "market": "xauusd",
+  "symbol": "XAUUSD_o",
+  "source_id": "user_mt5_export",
+  "data_type": "ohlc",
+  "timeframe": "M5",
+  "timezone": "source-local (unresolved)",
+  "normalization_timezone": null,
+  "start_timestamp": "2026-03-23T00:05:00",
+  "end_timestamp": "2026-09-03T09:20:00",
+  "analysis_cutoff": "2026-09-03T09:22:00.092 source-local (bundle tick anchor)",
+  "forming_bar_policy": "The 09:20 M5 bar is forming at the bundle cutoff and is excluded from close-confirmed logic. Latest fully closed M5 bar: 09:15.",
+  "file_path": "external-library://XAUUSD_o_M5_202603230005_202609030920.csv",
+  "sha256": "9503650ad91aa96aaf6cf921f48f457c55b974bd49ef9760412a9b77a1730452",
+  "rows": 32242,
+  "created_at": "2026-09-04",
+  "storage_policy": "Raw source remains external; manifest and validation evidence are committed.",
+  "observed_columns": ["<DATE>", "<TIME>", "<OPEN>", "<HIGH>", "<LOW>", "<CLOSE>", "<TICKVOL>", "<VOL>", "<SPREAD>"],
+  "observed_data_notes": {
+    "duplicate_timestamps": 0,
+    "out_of_order_timestamps": 0,
+    "ohlc_integrity_errors": 0,
+    "gap_events_over_7_5_minutes": 117,
+    "max_gap": "3 days 01:10:00",
+    "coverage_edge_note": "M5 begins at 00:05 while H1/M15 begin at 00:00 on 2026-03-23; the first higher-timeframe interval is therefore not fully reconstructable from this M5 file.",
+    "volume_column_all_zero": true,
+    "tick_volume_present": true,
+    "spread_min_points": 12,
+    "spread_median_points": 22,
+    "spread_max_points": 157
+  },
+  "validation": {
+    "status": "pass_with_warnings",
+    "errors": 0,
+    "warnings": 118,
+    "validator": "2026-09-04 multi-timeframe qualification audit"
+  },
+  "evidence_boundary": [
+    "Timezone and broker/feed identity remain unresolved.",
+    "VOL=0 is not treated as real exchange volume.",
+    "Gap events are reported and not synthesized.",
+    "The first missing 00:00 M5 interval is treated as a coverage-edge limitation, not silently filled.",
+    "Bundle cutoff is anchored by the companion tick export; common-export provenance is operationally assumed from the submitted bundle and filename alignment, not independently verified from terminal metadata."
+  ]
+}
