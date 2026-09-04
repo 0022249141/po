@@ -8,7 +8,8 @@ version = "0.2.0"
 description = "Evidence-first trading knowledge, data validation, and quantitative research core."
 requires-python = ">=3.11"
 dependencies = [
-  "PyYAML>=6.0,<7"
+  "PyYAML>=6.0,<7",
+  "tzdata>=2025.2"
 ]
 
 [tool.setuptools.packages.find]
