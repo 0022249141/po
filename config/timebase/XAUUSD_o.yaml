@@ -1,0 +1,37 @@
+version: 1
+protocol: docs/TIMEBASE_QUALIFICATION_PROTOCOL.md
+updated: 2026-09-04
+
+datasets:
+  xauusd_o_mtf_20260903_0922:
+    source_id: user_mt5_export
+    market: xauusd
+    symbol: XAUUSD_o
+    status: unresolved
+    source_timestamp_semantics: source_local_unknown_timezone
+    source_timezone: null
+    utc_offset: null
+    dst_policy: null
+    broker_feed_identity: null
+    named_session_use_allowed: false
+    neutral_policy: source_calendar_day_v1
+    bundle_manifest: data/manifests/XAUUSD_o_MTF_20260903_0922.json
+    qualification_report: data/reports/XAUUSD_o_MTF_20260903_0922.qualification.md
+    explicit_source_local_cutoff: "2026-09-03T09:22:00.092"
+    evidence: []
+    supporting_observations:
+      - exact H1/M15/M5 OHLC aggregation consistency on complete intervals
+      - exact BID tick reconstruction for compared completed H1/M15/M5 bars
+      - recurring daily and weekend gap patterns are recorded but are not timezone proof
+    blockers:
+      - exact broker/feed identity is not provenance-confirmed
+      - source/server timezone is not provenance-confirmed
+      - DST policy is not provenance-confirmed
+      - named trading-session boundaries are therefore not authorized
+
+rules:
+  verified_requires_non_statistical_evidence: true
+  statistical_inference_alone_cannot_verify: true
+  named_session_use_requires_verified: true
+  no_timezone_inference_from_filename: true
+  no_timezone_inference_from_gap_pattern_alone: true
