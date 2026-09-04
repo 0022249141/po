@@ -9,7 +9,9 @@ The repository is **operationally complete as a research core**: it can register
 
 Framework ingestion infrastructure is active under `docs/FRAMEWORK_INGESTION_PROTOCOL.md`, `knowledge/FRAMEWORK_INGESTION_STATUS.yaml`, and `knowledge/CONCEPT_REGISTRY.yaml`. Native-framework isolation and promotion states prevent unverified cross-framework substitutions from becoming project truth.
 
-Operationalization governance is active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. The first rule has now passed implementation review and is operational: `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
+Operationalization governance is active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. The first rule has passed implementation review and is operational: `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
+
+A neutral real-data adapter is now available in `research_core/tpo_dataset_adapter.py`. It can apply the operational TPO engine to MT5-style OHLC exports using an explicit cutoff and a provenance-tracked `source_calendar_day_v1` technical grouping while timezone/session semantics remain unresolved.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -26,7 +28,8 @@ The repository is **not historically complete** because several pre-existing art
 | RTM framework | COMPLETE shell + rule ledger | PARTIAL — valid-swing definition captured; FTR/BSZ/MPL/Quasimodo/Compression rules pending; `rtm-fshcd` missing |
 | Dealer microstructure | COMPLETE shell + definition layer | PARTIAL — theory concepts defined; observable proxies not frozen |
 | Auction Market Theory | COMPLETE shell + definition + operational layer | PARTIAL — TPO occupancy engine operational; canonical POC/Value Area/initiative-responsive/session formulas still pending |
-| XAUUSD data layer | COMPLETE | MULTI-TIMEFRAME QUALIFIED bundle exists with timebase/source warnings |
+| XAUUSD data layer | COMPLETE | MULTI-TIMEFRAME QUALIFIED bundle + first operational real-data smoke test |
+| TPO dataset adapter | COMPLETE | VERIFIED on real XAUUSD M5 export under neutral source-day policy |
 | MTF qualification engine | COMPLETE | VERIFIED on H1/M15/M5/Tick bundle |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
 | Quant research workflow | COMPLETE | STRATEGY-DEPENDENT |
@@ -39,6 +42,22 @@ The repository is **not historically complete** because several pre-existing art
 The registered `XAUUSD_o` H1/M15/M5/Tick bundle has exact internal OHLC aggregation consistency on complete intervals and exact BID-tick OHLC reconstruction over the common completed tick overlap. It is approved as `MULTI-TIMEFRAME-QUALIFIED PRICE DATA — WITH TIMEBASE / SOURCE WARNINGS`.
 
 It is not yet promoted to fully qualified backtest data because exact broker/feed identity, server timezone/DST policy, symbol point/contract metadata, session calendar, and one small tick-count discrepancy remain unresolved.
+
+## First operational real-data application
+
+The operational TPO engine was smoke-tested against the real user export `XAUUSD_o_M5_202603230005_202609030920.csv` using the already-qualified cutoff `2026-09-03 09:22:00.092` source-local.
+
+The adapter uses `config/session-policies/source-calendar-day.yaml`:
+
+- `session_id = source-day:YYYY-MM-DD`;
+- source timestamps remain `source_local_unknown_timezone`;
+- no timezone, DST, London, New York, Asia, exchange-session, or broker-business-day semantics are inferred;
+- bar closure is determined only by `bar_start + timeframe <= explicit_cutoff`;
+- the supplied `0.10` profile increment is recorded as a research parameter, not asserted as instrument tick size.
+
+For `source-day:2026-09-03`, the observed M5 segment contains 100 closed bars from 01:00 through 09:15. The 09:20 bar is forming at cutoff and contributes zero occupancy. No internal M5 gaps exist inside that observed segment. Full provenance and descriptive occupancy diagnostics are recorded in `data/reports/XAUUSD_o_M5_20260903.source-day-tpo.md`.
+
+This proves deterministic real-data execution of the operational engine; it does **not** resolve named-session semantics or create trading/backtest evidence.
 
 ## Knowledge and rule states
 
@@ -76,6 +95,7 @@ Operational status is generic. The current XAUUSD bundle still cannot be assigne
 - RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe, and forming-bar rules.
 - Dealer/microstructure concepts remain blocked until measurable observable proxies and lag/sampling policies are frozen.
 - AMT acceptance/rejection remains blocked until measurement window, threshold, confirmation, and XAUUSD session/timebase policy are source-frozen.
+- Named XAUUSD sessions remain blocked until exact timezone/DST/session provenance is resolved.
 
 ## What “complete” means here
 
@@ -110,9 +130,10 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 1. continue authoritative source extraction at exact passage/video-timestamp/chapter-page level;
 2. close operationalization blockers concept-by-concept without cross-framework substitution;
-3. keep `amt_tpo_profile_core_v1` descriptive until a downstream Strategy Specification defines how it is used;
-4. freeze any downstream Strategy Specification before implementation/backtest;
-5. backtest only after dataset timebase, execution model, costs, IS/OOS, lookahead, and robustness controls are explicit.
+3. resolve XAUUSD timezone/DST/session provenance before any named-session interpretation;
+4. keep `amt_tpo_profile_core_v1` descriptive until a downstream Strategy Specification defines how it is used;
+5. freeze any downstream Strategy Specification before implementation/backtest;
+6. backtest only after dataset timebase, execution model, costs, IS/OOS, lookahead, and robustness controls are explicit.
 
 ## Quality gate
 
