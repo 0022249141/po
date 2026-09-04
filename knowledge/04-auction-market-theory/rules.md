@@ -1,8 +1,12 @@
 # Auction Market Theory / Market Profile — Rule Formalization Ledger
 
-**Current state:** `source_indexed`
+**Current state:** `source_verified_partial`
 
 Canonical references are the Dalton books and CME education source registered in `config/source-registry.yaml`.
+
+Verified source note:
+
+- `source-notes/cme-dalton-market-profile-verified.md`
 
 Named concepts from the canonical map: Value Area, POC, Initiative activity, Responsive activity.
 
@@ -29,6 +33,12 @@ edge_cases: []
 interpretation_notes: []
 quant_spec_path:
 ```
+
+## Verified native-framework baseline
+
+The currently verified sources support Market Profile as a market-generated auction framework using price/time organization, with explicit acceptance/rejection language and publisher-level support for Value Area and market-structure analysis.
+
+They do **not** yet provide the exact machine-operational formulas needed by this project for POC, Value Area construction, TPO segmentation, initiative/responsive thresholds, or XAUUSD session handling.
 
 ## Volume/data boundary
 
