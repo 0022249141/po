@@ -76,25 +76,28 @@ assessments:
     candidate_spec_path: null
 
   amt_market_profile_core:
-    concept_state: operational_candidate
-    readiness: candidate
+    concept_state: operational
+    readiness: operational
     machine_ready: true
     target_role: context_model
     blockers: []
     candidate_spec_path: quant/candidates/AMT_TPO_PROFILE_CORE.yaml
+    operational_rule_path: quant/operational/AMT_TPO_PROFILE_CORE.yaml
+    implementation_path: research_core/tpo_profile.py
+    implementation_review_path: docs/AMT_TPO_PROFILE_IMPLEMENTATION_REVIEW.md
     instrument_scope: generic price series; initial research market XAUUSD; no instrument-specific thresholds embedded
     input_data: closed OHLC bars plus externally supplied session_id and positive price_increment
     timeframe_or_event_clock: closed-bar event clock; update exactly once when each bar closes
     lookback: current session only, reset when session_id changes
     reference_set: all closed bars in the current session observed up to and including the current decision timestamp
-    state_variables: profile bins, TPO count per price bin, observed session low/high, bars seen
-    trigger: on each closed bar, increment every integer price bin intersecting the inclusive bar range [low, high] by one TPO unit
+    state_variables: profile bins, TPO count per price bin, observed session low/high, bars seen, incomplete flag/reasons, last closed timestamp
+    trigger: on each closed bar, increment every normalized integer price bin intersecting the inclusive bar range [low, high] by one TPO unit
     confirmation: bar contributes only after it is closed
-    invalidation: missing session_id or invalid price_increment or irreparable timestamp ordering or later source revision
-    forming_bar_policy: forming bars contribute zero TPO units
-    timezone_or_session_dependency: session_id must come from an external provenance-tracked session policy; timezone/DST is never inferred by this candidate
-    missing_data_policy: preserve observed profile but mark the session incomplete when an intra-session data gap is detected; downstream fully-qualified logic must reject incomplete profiles
-    tie_and_edge_case_policy: normalize prices to integer ticks; include low/high boundary bins; deterministic occupancy counts; empty sessions invalid; one-bar sessions descriptive only
+    invalidation: missing session_id or invalid price_increment or duplicate/non-monotonic closed timestamp or later source revision
+    forming_bar_policy: forming bars contribute zero TPO units and may later arrive once as closed at the same timestamp
+    timezone_or_session_dependency: session_id must come from an external provenance-tracked session policy; timezone/DST is never inferred by this engine
+    missing_data_policy: preserve observed profile but mark the session incomplete when an upstream gap is declared; downstream fully-qualified logic must reject incomplete profiles
+    tie_and_edge_case_policy: Decimal normalization with ROUND_HALF_UP(price / price_increment); include normalized low/high boundary bins; empty session invalid; one-bar sessions descriptive only
     measurable_proxy: not_applicable; this is a descriptive time-at-price context model rather than a latent dealer variable
 
   amt_price_acceptance_rejection:
