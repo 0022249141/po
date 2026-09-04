@@ -1,0 +1,44 @@
+version: 1
+policy_id: source_calendar_day_v1
+purpose: deterministic technical grouping for source-local timestamps when timezone semantics are unresolved
+
+clock:
+  input_timestamp_semantics: source_local_unknown_timezone
+  timezone_name: null
+  utc_offset: null
+  dst_policy: unresolved
+
+session_id:
+  formula: source-day:YYYY-MM-DD
+  source: calendar date encoded in the raw source timestamp
+  semantic_boundary: >-
+    This identifier is a technical grouping only. It is not an Asia, London, New York,
+    exchange, broker-business-day, or liquidity-session label.
+
+bar_close_policy:
+  formula: bar_start + timeframe_duration <= explicit_cutoff
+  cutoff_required: true
+  forming_bar_effect: none
+
+internal_gap_policy:
+  expected_interval: timeframe_duration
+  rule: >-
+    Within the same source-calendar date, a spacing larger than one expected bar interval marks
+    the observed profile incomplete. No gap is inferred before the first observed bar of a source
+    day or across a source-calendar-date boundary because the trading/session calendar is unresolved.
+
+price_increment:
+  required: true
+  inferred_from_decimal_precision: false
+  inferred_from_symbol_name: false
+  semantics: >-
+    Explicit research/profile bin width unless independently proven to equal the instrument tick size
+    by provenance-tracked contract metadata.
+
+prohibited_interpretations:
+  - london_session
+  - new_york_session
+  - asia_session
+  - exchange_session
+  - broker_business_day
+  - canonical_market_profile_session
