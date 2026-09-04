@@ -25,5 +25,7 @@ jobs:
         run: python tools/validate_concepts.py
       - name: Validate operationalization registry
         run: python tools/validate_operationalization.py
+      - name: Validate timebase registry
+        run: python tools/validate_timebase.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
