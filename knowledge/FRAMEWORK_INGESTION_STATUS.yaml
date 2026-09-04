@@ -27,16 +27,20 @@ frameworks:
     source_ids:
       - readthemarket
       - rtm_academy
-    status: source_verified_partial
+    status: defined_partial
     independent_definition_required: true
     verified_artifacts:
       - source-notes/readthemarket-official.md
+    definition_artifacts:
+      - definitions.md
     named_concepts:
       - FTR
       - BSZ
       - MPL
       - Quasimodo
       - Compression
+    defined_concepts:
+      - rtm_valid_swing
     missing_internal_dependency:
       - rtm-fshcd
 
@@ -49,10 +53,19 @@ frameworks:
       - grossman_miller_1988
       - arxiv_2003_05958
       - arxiv_2407_17393
-    status: source_verified_partial
+    status: defined_partial
     independent_definition_required: true
     verified_artifacts:
       - paper-notes/core-microstructure-verified.md
+    definition_artifacts:
+      - definitions.md
+    defined_concepts:
+      - dealer_informed_trading
+      - dealer_adverse_selection
+      - dealer_inventory_risk
+      - dealer_liquidity_provision
+      - dealer_immediacy
+      - dealer_price_impact
     direct_inventory_visibility: false
 
   auction_market_theory:
@@ -61,16 +74,23 @@ frameworks:
       - dalton_mind_over_markets
       - dalton_markets_in_profile
       - cme_market_profile_education
-    status: source_verified_partial
+    status: defined_partial
     independent_definition_required: true
     verified_artifacts:
       - source-notes/cme-dalton-market-profile-verified.md
+    definition_artifacts:
+      - definitions.md
+    defined_concepts:
+      - amt_market_profile_core
+      - amt_price_acceptance_rejection
     named_concepts:
       - Value Area
       - POC
       - Initiative activity
       - Responsive activity
     centralized_volume_required_for_centralized_volume_claims: true
+
+concept_registry: knowledge/CONCEPT_REGISTRY.yaml
 
 promotion_rule: >-
   No concept may be marked operational or backtest_ready solely from a generic definition,
