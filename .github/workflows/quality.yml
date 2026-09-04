@@ -43,5 +43,7 @@ jobs:
         run: python tools/validate_regime_results.py
       - name: Validate strategy signal specifications
         run: python tools/validate_strategy_specs.py
+      - name: Validate signal evaluation specifications
+        run: python tools/validate_signal_evaluation.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high

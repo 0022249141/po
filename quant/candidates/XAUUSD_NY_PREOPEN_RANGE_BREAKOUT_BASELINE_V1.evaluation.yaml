@@ -1,0 +1,64 @@
+version: 1
+evaluation_id: xauusd_ny_preopen_range_breakout_baseline_v1_gross_signal_eval
+status: frozen
+bound_strategy_spec: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml
+bound_strategy_spec_id: xauusd_ny_preopen_range_breakout_baseline_v1
+frozen_at_utc: "2026-09-04T08:02:00Z"
+
+purpose: >-
+  Freeze deterministic OHLC-bar evaluation semantics for the already-frozen signal rules. This
+  evaluation is gross and research-only. It does not resolve broker bid/ask execution, commission,
+  slippage, or net profitability.
+
+data:
+  timeframe: M5
+  verified_utc_required: true
+  closed_bars_only: true
+  complete_reference_range_required: true
+  complete_new_york_session_required_for_evaluation: true
+  expected_new_york_m5_bars: 108
+
+fills:
+  entry_fill: next_m5_bar_open_after_trigger
+  same_trigger_bar_fill_prohibited: true
+  protective_stop_active_on_entry_bar: true
+  stop_touch_rule: inclusive
+  stop_gap_rule: bar_open_if_open_beyond_stop_otherwise_stop_level
+  time_exit_rule: final_closed_m5_bar_close_of_new_york_session
+  time_exit_timestamp: new_york_session_end
+
+cost_model:
+  class: gross_zero_cost_signal_evaluation
+  commission_applied: false
+  slippage_applied: false
+  spread_applied: false
+  net_profitability_claim_allowed: false
+
+returns:
+  unit: R
+  initial_risk: absolute_entry_fill_minus_initial_stop_fill_reference
+  long_R: (exit_price-entry_price)/initial_risk
+  short_R: (entry_price-exit_price)/initial_risk
+  gap_stop_can_exceed_minus_one_R: true
+
+reporting:
+  trade_ledger_required: true
+  overall_metrics_required: true
+  long_short_split_required: true
+  calendar_month_split_required: true
+  regime_split_required: true
+  regime_is_reporting_only: true
+  regime_filtering_prohibited: true
+  eligible_month_definition: at_least_one_evaluated_trade
+
+acceptance_binding:
+  source: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml
+  no_parameter_tuning_after_result: true
+  failure_action: reject_v1_without_parameter_tuning
+
+interpretation_boundaries:
+  signal_research_only: true
+  not_net_backtest: true
+  not_live_execution_model: true
+  not_permission_to_trade: true
+  broker_cost_qualification_still_required: true
