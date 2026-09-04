@@ -56,6 +56,22 @@ At the bundle cutoff the H1 09:00, M15 09:15 and M5 09:20 rows are forming and a
 
 Timezone/DST, broker/feed identity and exact symbol contract metadata are still required before session-sensitive or fully cost-qualified backtesting.
 
+## Operational TPO real-data smoke test
+
+The first operational framework engine applied to real XAUUSD data is `amt_tpo_profile_core_v1` through the neutral source-day adapter:
+
+- engine: `research_core/tpo_profile.py`
+- adapter: `research_core/tpo_dataset_adapter.py`
+- session policy: `config/session-policies/source-calendar-day.yaml`
+- CLI: `tools/run_source_day_tpo.py`
+- report: `data/reports/XAUUSD_o_M5_20260903.source-day-tpo.md`
+
+Input: `XAUUSD_o_M5_202603230005_202609030920.csv`, SHA-256 `9503650ad91aa96aaf6cf921f48f457c55b974bd49ef9760412a9b77a1730452`.
+
+Using the already-qualified cutoff `2026-09-03 09:22:00.092` and an explicitly declared research profile increment of `0.10`, the current technical source-day group contains 100 closed M5 bars from 01:00 through 09:15. The 09:20 bar is forming and contributes zero occupancy. No internal five-minute gaps occur inside the observed 01:00–09:15 segment.
+
+This is a **technical source-calendar-date grouping only**. It is not a London, New York, Asia, exchange, broker-business-day, or canonical Market Profile session. No timezone/DST inference is performed. The result is descriptive occupancy only and does not create POC, Value Area, entry/exit, or profitability claims.
+
 ## Validation checklist
 
 - symbol/provider identity
@@ -75,6 +91,8 @@ Timezone/DST, broker/feed identity and exact symbol contract metadata are still 
 Dukascopy is intended as an independent historical benchmark against broker/MT5 data. Differences between feeds must be measured rather than assumed negligible.
 
 The first MT5-derived M5 dataset is approved for **price-based research with warnings**, not yet for timezone-sensitive session research or fully qualified transaction-cost backtesting. The multi-timeframe bundle adds exact internal aggregation and tick/BID OHLC reconstruction evidence but does not remove the unresolved timezone/source/contract blockers.
+
+The TPO source-day smoke test proves deterministic real-data execution of one descriptive operational rule. It does not promote the XAUUSD dataset to named-session backtest readiness.
 
 ## TradingView role
 
