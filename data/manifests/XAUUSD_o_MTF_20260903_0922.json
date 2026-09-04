@@ -1,0 +1,63 @@
+{
+  "bundle_id": "xauusd_o_mtf_20260903_0922",
+  "market": "xauusd",
+  "symbol": "XAUUSD_o",
+  "source_id": "user_mt5_export",
+  "timezone": "source-local (unresolved)",
+  "analysis_cutoff": "2026-09-03T09:22:00.092",
+  "qualification": "multi-timeframe-qualified-price-data-with-warnings",
+  "datasets": [
+    {
+      "timeframe": "H1",
+      "manifest": "data/manifests/XAUUSD_o_H1_202603230000_202609030900.json",
+      "sha256": "33eddb03596eba9ad6756d38c70608880fd7bc369b1ca07faadd66c62ced188f",
+      "rows": 2691,
+      "latest_closed_bar": "2026-09-03T08:00:00"
+    },
+    {
+      "timeframe": "M15",
+      "manifest": "data/manifests/XAUUSD_o_M15_202603230000_202609030915.json",
+      "sha256": "e8aa7057bef50ce46bc378369a0c48c367e82c5e3250e3c8971d1cab8fdc5d5d",
+      "rows": 10757,
+      "latest_closed_bar": "2026-09-03T09:00:00"
+    },
+    {
+      "timeframe": "M5",
+      "manifest": "data/manifests/XAUUSD_o_M5_202603230005_202609030920.json",
+      "sha256": "9503650ad91aa96aaf6cf921f48f457c55b974bd49ef9760412a9b77a1730452",
+      "rows": 32242,
+      "latest_closed_bar": "2026-09-03T09:15:00"
+    },
+    {
+      "timeframe": "TICK",
+      "manifest": "data/manifests/XAUUSD_o_TICK_202609021900_202609030922.json",
+      "sha256": "736ad12922f20d2b7d87208ab16c4f5237e300e0c4d86e6dad584b885bd65c6b",
+      "rows": 156749,
+      "last_timestamp": "2026-09-03T09:22:00.092"
+    }
+  ],
+  "cross_timeframe_checks": {
+    "m5_to_m15_complete_groups": 10730,
+    "m5_to_m15_ohlc_mismatches": 0,
+    "m5_to_h1_complete_groups": 2664,
+    "m5_to_h1_ohlc_mismatches": 0,
+    "m15_to_h1_complete_groups": 2688,
+    "m15_to_h1_ohlc_mismatches": 0,
+    "tick_to_m5_completed_bars": 160,
+    "tick_to_m5_ohlc_mismatches": 0,
+    "tick_to_m15_completed_bars": 53,
+    "tick_to_m15_ohlc_mismatches": 0,
+    "tick_to_h1_completed_bars": 13,
+    "tick_to_h1_ohlc_mismatches": 0,
+    "tick_volume_record_count_discrepancies": 1,
+    "tick_volume_discrepancy_detail": "2026-09-03 07:10 M5: TICKVOL=917 vs exported tick records=915; rolls into 07:00 M15/H1. OHLC exact."
+  },
+  "report": "data/reports/XAUUSD_o_MTF_20260903_0922.qualification.md",
+  "promotion_blockers": [
+    "exact broker/feed identity",
+    "source/server timezone and DST policy",
+    "symbol digits/point/contract/tick-value metadata",
+    "daily trading-session calendar",
+    "documented acceptance/explanation for two-record tick-volume discrepancy"
+  ]
+}
