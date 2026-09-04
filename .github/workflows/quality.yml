@@ -49,5 +49,9 @@ jobs:
         run: python tools/validate_signal_results.py
       - name: Validate spread sensitivity specifications
         run: python tools/validate_spread_sensitivity.py
+      - name: Validate recorded spread sensitivity results
+        run: python tools/validate_spread_results.py
+      - name: Validate residual friction budget specification
+        run: python tools/validate_residual_friction_budget.py
       - name: Static lookahead audit
         run: python tools/audit_lookahead.py . --fail-on high
