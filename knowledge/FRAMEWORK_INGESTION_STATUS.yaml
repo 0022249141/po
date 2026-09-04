@@ -74,15 +74,18 @@ frameworks:
       - dalton_mind_over_markets
       - dalton_markets_in_profile
       - cme_market_profile_education
-    status: defined_partial
+    status: operational_candidate_partial
     independent_definition_required: true
     verified_artifacts:
       - source-notes/cme-dalton-market-profile-verified.md
     definition_artifacts:
       - definitions.md
     defined_concepts:
-      - amt_market_profile_core
       - amt_price_acceptance_rejection
+    operational_candidate_concepts:
+      - amt_market_profile_core
+    operational_candidate_artifacts:
+      - ../../quant/candidates/AMT_TPO_PROFILE_CORE.yaml
     named_concepts:
       - Value Area
       - POC
@@ -91,6 +94,7 @@ frameworks:
     centralized_volume_required_for_centralized_volume_claims: true
 
 concept_registry: knowledge/CONCEPT_REGISTRY.yaml
+operationalization_registry: knowledge/OPERATIONALIZATION_REGISTRY.yaml
 
 promotion_rule: >-
   No concept may be marked operational or backtest_ready solely from a generic definition,
