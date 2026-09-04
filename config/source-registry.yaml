@@ -141,6 +141,26 @@ sources:
     role: historical_tick_minute_backtest
     ingest_status: planned
 
+  - id: user_mt5_export
+    category: xauusd_data
+    name: User-provided MetaTrader 5 export
+    class: user_market_data_export
+    role: primary_operational_analysis_and_backtest_input
+    ingest_status: active
+    provenance_requirements:
+      - exact_filename
+      - sha256
+      - symbol
+      - timeframe_or_tick
+      - source_timezone
+      - export_cutoff
+      - closed_vs_forming_bar_status
+      - broker_or_feed_identity_when_known
+    restrictions:
+      - do_not_assume_exchange_volume
+      - do_not_assume_timezone_from_filename
+      - do_not_merge_with_other_providers_without_normalization
+
   - id: tradingview
     category: xauusd_data
     name: TradingView
