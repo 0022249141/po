@@ -10,8 +10,11 @@ frameworks:
       - ict_official_x
       - wyckoff_analytics
       - ggu_fi354
-    status: source_indexed
+    status: source_verified_partial
     independent_definition_required: true
+    verified_artifacts:
+      - source-notes/ict-official-market-structure.md
+      - source-notes/wyckoff-method-official.md
     planned_artifacts:
       - source-notes
       - glossary.md
@@ -24,8 +27,10 @@ frameworks:
     source_ids:
       - readthemarket
       - rtm_academy
-    status: source_indexed
+    status: source_verified_partial
     independent_definition_required: true
+    verified_artifacts:
+      - source-notes/readthemarket-official.md
     named_concepts:
       - FTR
       - BSZ
@@ -44,8 +49,10 @@ frameworks:
       - grossman_miller_1988
       - arxiv_2003_05958
       - arxiv_2407_17393
-    status: source_indexed
+    status: source_verified_partial
     independent_definition_required: true
+    verified_artifacts:
+      - paper-notes/core-microstructure-verified.md
     direct_inventory_visibility: false
 
   auction_market_theory:
