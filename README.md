@@ -1,104 +1,68 @@
-# Pouria MT5 MCP
+# P — Trading Knowledge, Data & Research Repository
 
-Read-only Model Context Protocol (MCP) server for MetaTrader 5.
+این مخزن از این پس بر اساس سند مرجع `docs/resource-connector-map.md` سازمان‌دهی می‌شود. هدف پروژه ساخت یک پایپ‌لاین منظم برای **دانش، داده، پژوهش، Backtesting و اتصال منابع به ChatGPT** در حوزه‌های ICT/SMC، RTM، Wyckoff، Dealer/Market Microstructure، Auction Market Theory، XAUUSD و طلای آبشده است.
 
-The server exposes MT5 market/account data to an MCP-compatible client without placing, modifying, or closing orders.
+> وضعیت معماری: MCP محلی MT5 از مخزن حذف شده است. این ریپو دیگر یک MCP Server نیست.
 
-## Tools
+## سند مرجع
 
-- `mt5_status` — check MT5 terminal/Python connectivity
-- `get_symbol_info` — symbol specification and trading properties
-- `get_tick` — latest bid/ask/last tick
-- `get_candles` — recent OHLC candles; closed candles only by default
-- `get_market_snapshot` — multi-timeframe candles plus latest tick in one call
-- `get_account_info` — balance/equity/margin/leverage metrics
-- `get_positions` — open positions, optionally filtered by symbol
+- `docs/resource-connector-map.md` — نسخه‌ی اصلی Resource Connector Map و مبنای تصمیم‌گیری معماری.
+- `docs/ARCHITECTURE.md` — معماری اجرایی استخراج‌شده از سند مرجع.
+- `docs/SOURCE_POLICY.md` — قواعد کیفیت، منبع، provenance و جلوگیری از مخلوط‌شدن Fact/Interpretation.
+- `docs/MISSING_ASSETS.md` — دارایی‌هایی که در سند مرجع نام برده شده‌اند اما هنوز در این مخزن موجود نیستند.
+- `docs/IMPLEMENTATION_PLAN.md` — مراحل اجرای پروژه و معیار تکمیل هر مرحله.
 
-Default symbol: `XAUUSD_l`.
-
-## Architecture
+## ساختار پروژه
 
 ```text
-MCP client
-   |
-   | stdio
-   v
-server.js (Node.js / MCP TypeScript SDK)
-   |
-   | child process + JSON
-   v
-bridge/mt5_bridge.py
-   |
-   v
-MetaTrader 5 terminal
+po/
+├── README.md
+├── .gitignore
+├── docs/
+│   ├── resource-connector-map.md
+│   ├── ARCHITECTURE.md
+│   ├── SOURCE_POLICY.md
+│   ├── MISSING_ASSETS.md
+│   └── IMPLEMENTATION_PLAN.md
+├── config/
+│   ├── source-registry.yaml
+│   └── pipeline-manifest.yaml
+├── knowledge/
+│   ├── 01-ict-smc-wyckoff/
+│   ├── 02-rtm/
+│   ├── 03-dealer-microstructure/
+│   └── 04-auction-market-theory/
+├── data/
+│   ├── iran-gold/
+│   ├── xauusd/
+│   └── schema/
+├── quant/
+└── connectors/
 ```
 
-## Windows setup
+## هشت محور سند مرجع
 
-Prerequisites:
+| # | محور | وضعیت در این ریپو |
+|---|---|---|
+| 1 | ICT / SMC / Wyckoff | ساختار و registry ایجاد شده؛ محتوای منبع هنوز ingest نشده |
+| 2 | RTM / IF Myante | ساختار و registry ایجاد شده؛ محتوای منبع هنوز ingest نشده |
+| 3 | Dealer / Market Microstructure | فهرست منابع آکادمیک و نقش آن‌ها ثبت شده |
+| 4 | Auction Market Theory / Market Profile | ساختار منابع Dalton/CME ثبت شده |
+| 5 | طلای آبشده / ایران | لایه‌ی داده و provenance تعریف شده؛ scraper/API ساخته نشده |
+| 6 | XAUUSD / جهانی | Dukascopy/TradingView/TradingEconomics/ForexFactory در registry ثبت شده‌اند |
+| 7 | Coding / Backtesting | لایه quant تعریف شده؛ موتورهای اشاره‌شده در سند مرجع هنوز در ریپو موجود نیستند |
+| 8 | ChatGPT integration | سیاست Knowledge Files / GitHub / connectors مستندسازی شده؛ MCP حذف شده |
 
-- Node.js 20+
-- Python with the `MetaTrader5` package installed
-- MetaTrader 5 terminal installed and logged in
+## اصل‌های غیرقابل‌تغییر پروژه
 
-Clone and install:
+1. **Primary-source first** — در هر مکتب، منبع رسمی یا اولیه بر بازنشر شخص ثالث اولویت دارد.
+2. **No fabrication** — هر فایلی که سند مرجع نام می‌برد ولی در ریپو موجود نیست، به‌عنوان Missing Asset ثبت می‌شود و محتوای آن حدس زده نمی‌شود.
+3. **Provenance required** — هر داده یا متن ingest‌شده باید منبع، تاریخ/نسخه، روش دریافت و وضعیت پردازش داشته باشد.
+4. **Observed ≠ Interpretation** — داده مشاهده‌شده، تعریف منبع، تفسیر تحلیلی و فرضیه Quant باید جدا نگهداری شوند.
+5. **No silent rule mutation** — در تبدیل مفاهیم به Strategy Specification یا کد، Ruleها بدون ثبت تغییر نمی‌کنند.
+6. **Backtest before claim** — هیچ Edge یا Rule به‌عنوان validated معرفی نمی‌شود مگر با تست بازتولیدپذیر.
+7. **Raw sources are not knowledge files** — PDF/ویدئو/صفحه خام ابتدا باید index، summarize و normalize شوند؛ سپس نسخه‌ی curated وارد لایه Knowledge شود.
 
-```powershell
-git clone https://github.com/0022249141/po.git
-cd po
-npm install
-py -m pip install MetaTrader5
-```
+## وضعیت فعلی
 
-If the `MetaTrader5` package is installed in a specific Python executable, set `PYTHON_BIN` before starting the MCP server:
-
-```powershell
-$env:PYTHON_BIN="C:\Users\pouria.sl\AppData\Local\Python\pythoncore-3.14-64\python.exe"
-$env:MT5_SYMBOL="XAUUSD_l"
-npm start
-```
-
-If `mt5.initialize()` cannot discover the terminal automatically, also set:
-
-```powershell
-$env:MT5_TERMINAL_PATH="C:\Program Files\MetaTrader 5\terminal64.exe"
-```
-
-Run a syntax check:
-
-```powershell
-npm run check
-```
-
-## MCP client configuration
-
-For a local client that supports stdio MCP servers, point it to `server.js`.
-
-Example configuration shape:
-
-```json
-{
-  "mcpServers": {
-    "pouria-mt5": {
-      "command": "node",
-      "args": ["C:\\path\\to\\po\\server.js"],
-      "env": {
-        "PYTHON_BIN": "C:\\path\\to\\python.exe",
-        "MT5_SYMBOL": "XAUUSD_l"
-      }
-    }
-  }
-}
-```
-
-## Data rules
-
-`get_candles` and `get_market_snapshot` use `closed_only=true` by default. In that mode MT5 bar position `0` (the forming candle) is excluded and data starts from bar position `1`.
-
-Timestamps returned by the Python bridge are normalized to UTC ISO-8601 strings. MT5 `tick_volume`, `spread`, and `real_volume` are returned as provided by the terminal; the server does not reinterpret them as exchange order-flow data.
-
-## Security scope
-
-Version `0.1.0` is intentionally read-only. There is no tool for `order_send`, position closing, stop modification, or account credential handling.
-
-Do not commit `.env`, passwords, API keys, or broker credentials. `.gitignore` excludes local environment files and `node_modules`.
+اسکلت اصلی پروژه بر اساس Resource Connector Map ساخته شده است. مرحله‌ی بعدی، ورود و صحت‌سنجی **دارایی‌های موجود قبلی** (مانند glossary، SKILL، MARKET_PARAMS، ترجمه‌های PDF و موتورهای نام‌برده‌شده) و سپس ingest کنترل‌شده‌ی منابع رسمی است.
