@@ -1,0 +1,142 @@
+version: 1
+result_id: xauusd_named_session_tpo_descriptive_v1_result_20260904
+study_id: xauusd_named_session_tpo_descriptive_v1
+status: recorded
+result_type: compact_descriptive_result
+recorded_at_utc: "2026-09-04T06:58:58Z"
+
+provenance:
+  execution_environment: user_local_windows
+  execution_command: >-
+    py tools/run_named_session_tpo_study.py
+    .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\XAUUSD_o_M5_bars_utc.csv
+    --output .\MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_study_v1.json
+  raw_result_path_external: MT5_UTC_EXPORTS\XAUUSD_o_20260904_052959_UTC\named_session_tpo_study_v1.json
+  raw_result_committed: false
+  source_note: >-
+    Compact project record transcribed from the user-reported successful local execution output.
+    The external JSON remains outside Git with the raw market-data bundle.
+
+study_binding:
+  spec_path: quant/studies/XAUUSD_NAMED_SESSION_TPO_DESCRIPTIVE_V1.yaml
+  spec_status: frozen
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  session_policy_id: xauusd_major_fx_sessions_v1
+  completeness_mode: complete_only
+  exclude_coverage_edges: true
+  operational_rule_id: amt_tpo_profile_core_v1
+  price_increment: "0.01"
+  statistical_significance_test: none
+
+sample_counts:
+  asia_tokyo:
+    candidate_instances: 130
+    selected_complete: 12
+    excluded_coverage_edge: 2
+    excluded_incomplete: 116
+    role: secondary_descriptive
+  london:
+    candidate_instances: 129
+    selected_complete: 128
+    excluded_coverage_edge: 0
+    excluded_incomplete: 1
+    role: primary
+  new_york:
+    candidate_instances: 129
+    selected_complete: 126
+    excluded_coverage_edge: 0
+    excluded_incomplete: 3
+    role: primary
+
+session_statistics:
+  asia_tokyo:
+    n: 12
+    range_ticks:
+      q25: 5410.0
+      median: 8443.0
+      q75: 12161.75
+      mean: 8697.5
+    occupancy_events:
+      q25: 55037.25
+      median: 76039.5
+      q75: 93513.75
+      mean: 79428.58333333333
+    mean_bin_occupancy:
+      median: 9.900361868946678
+      mean: 9.801137971133933
+    bars_seen_median: 108.0
+  london:
+    n: 128
+    range_ticks:
+      q25: 4059.25
+      median: 5455.5
+      q75: 7265.5
+      mean: 6468.40625
+      max: 41429.0
+    occupancy_events:
+      q25: 46342.25
+      median: 54008.0
+      q75: 63943.25
+      mean: 60424.03125
+      max: 314390.0
+    mean_bin_occupancy:
+      median: 10.29155797179649
+      mean: 10.560128859832938
+    bars_seen_median: 108.0
+  new_york:
+    n: 126
+    range_ticks:
+      q25: 4991.5
+      median: 6261.5
+      q75: 8675.25
+      mean: 7484.190476190476
+      max: 27183.0
+    occupancy_events:
+      q25: 54142.75
+      median: 65066.0
+      q75: 74827.75
+      mean: 70118.97619047618
+      max: 261821.0
+    mean_bin_occupancy:
+      median: 10.382069575982467
+      mean: 10.176482917314749
+    bars_seen_median: 108.0
+
+primary_comparison:
+  status: eligible
+  minimum_primary_n: 30
+  left_session: london
+  right_session: new_york
+  range_ticks:
+    median_difference_left_minus_right: -806.0
+    median_ratio_left_over_right: 0.8712768505949053
+  occupied_bins:
+    median_difference_left_minus_right: -806.0
+    median_ratio_left_over_right: 0.8712974051896207
+  occupancy_events:
+    median_difference_left_minus_right: -11058.0
+    median_ratio_left_over_right: 0.8300494882119693
+  mean_bin_occupancy:
+    median_difference_left_minus_right: -0.09051160418597703
+    median_ratio_left_over_right: 0.9912819304933803
+  bars_seen:
+    median_difference_left_minus_right: 0.0
+    median_ratio_left_over_right: 1.0
+
+interpretation_boundaries:
+  descriptive_only: true
+  trading_signal_prohibited: true
+  profitability_claim_prohibited: true
+  poc_value_area_prohibited: true
+  ict_kill_zone_substitution_prohibited: true
+  centralized_volume_claim_prohibited: true
+  dealer_inventory_claim_prohibited: true
+
+verdict: >-
+  DESCRIPTIVE RESULT RECORDED. London and New York meet the pre-registered primary sample-size gate.
+  New York shows larger aggregate median range and occupancy-event counts in this dataset, while
+  median mean-bin-occupancy is very similar. No statistical significance, causal, trading-edge,
+  profitability, POC/Value-Area, order-flow, or dealer-inventory conclusion is authorized.
