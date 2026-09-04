@@ -1,0 +1,105 @@
+version: 1
+protocol: docs/OPERATIONALIZATION_GATE.md
+updated: 2026-09-04
+
+assessments:
+  rtm_valid_swing:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: structural_measure
+    blockers:
+      - objective retracement segmentation rule is not source-resolved
+      - furthest-advance termination rule is not source-resolved
+      - nested-swing and equal-extreme tie handling is not source-resolved
+      - timeframe and closed-vs-forming-bar policy is not source-resolved
+    candidate_spec_path: null
+
+  dealer_informed_trading:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: theoretical_feature_candidate
+    blockers:
+      - no directly observed informed-trader state exists in current project data
+      - measurable proxy and proxy-validation protocol are not frozen
+    candidate_spec_path: null
+
+  dealer_adverse_selection:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: theoretical_feature_candidate
+    blockers:
+      - adverse-selection state is not directly observable from OHLC alone
+      - measurable proxy, sampling clock, and lag policy are not frozen
+    candidate_spec_path: null
+
+  dealer_inventory_risk:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: theoretical_feature_candidate
+    blockers:
+      - live dealer inventory is not available in current data
+      - no validated observable proxy has been specified
+    candidate_spec_path: null
+
+  dealer_liquidity_provision:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: theoretical_feature_candidate
+    blockers:
+      - liquidity-provision state requires an explicit measurable proxy
+      - current OHLC/tick bundle does not identify individual liquidity providers
+    candidate_spec_path: null
+
+  dealer_immediacy:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: theoretical_feature_candidate
+    blockers:
+      - no frozen immediacy proxy or event clock exists
+      - transaction-cost and quote-depth metadata are incomplete
+    candidate_spec_path: null
+
+  dealer_price_impact:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: quantitative_feature_candidate
+    blockers:
+      - signed order-flow input is absent from the current dataset
+      - impact horizon, normalization, and lag policy are not frozen
+    candidate_spec_path: null
+
+  amt_market_profile_core:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: context_model
+    blockers:
+      - exact profile construction method is not source-frozen
+      - session boundary, timezone, and DST policy are unresolved for the qualified XAUUSD bundle
+      - POC and Value Area algorithms are not yet canonical project rules
+    candidate_spec_path: null
+
+  amt_price_acceptance_rejection:
+    concept_state: defined
+    readiness: blocked
+    machine_ready: false
+    target_role: context_feature
+    blockers:
+      - acceptance/rejection measurement window is not source-frozen
+      - threshold and confirmation rule are not source-frozen
+      - session/timebase policy remains unresolved for XAUUSD
+    candidate_spec_path: null
+
+rules:
+  machine_ready_requires_all_mandatory_fields: true
+  blocked_requires_explicit_blockers: true
+  theoretical_concepts_require_measurable_proxy: true
+  no_ohlc_only_dealer_inventory_claims: true
+  no_hindsight_or_future_information: true
