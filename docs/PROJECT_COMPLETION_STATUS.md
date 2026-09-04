@@ -9,7 +9,7 @@ The repository is **operationally complete as a research core**: it can register
 
 Framework ingestion infrastructure is active under `docs/FRAMEWORK_INGESTION_PROTOCOL.md`, `knowledge/FRAMEWORK_INGESTION_STATUS.yaml`, and `knowledge/CONCEPT_REGISTRY.yaml`. Native-framework isolation and promotion states prevent unverified cross-framework substitutions from becoming project truth.
 
-Operationalization governance is now active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. Defined concepts are audited separately for machine readiness before they may become operational candidates.
+Operationalization governance is active under `docs/OPERATIONALIZATION_GATE.md` and `knowledge/OPERATIONALIZATION_REGISTRY.yaml`. The first rule has now passed implementation review and is operational: `amt_tpo_profile_core_v1`, a deterministic descriptive time-at-price occupancy engine. It is explicitly a project operational interpretation and does not define canonical POC, Value Area, initiative/responsive behavior, or a trading signal.
 
 The repository is **not historically complete** because several pre-existing artifacts named by the canonical map have not been supplied. Those items cannot be reconstructed by inference without contaminating provenance.
 
@@ -21,11 +21,11 @@ The repository is **not historically complete** because several pre-existing art
 | Source registry & policy | COMPLETE | COMPLETE for mapped source metadata |
 | Framework ingestion protocol | COMPLETE | ACTIVE — source-faithful ingestion ongoing |
 | Concept registry / definition gate | COMPLETE | PARTIAL — source-supported definitions only |
-| Operationalization gate | COMPLETE | ACTIVE — no machine-ready framework rule promoted without unresolved fields being closed |
+| Operationalization gate | COMPLETE | ACTIVE — first operational rule admitted after implementation audit |
 | ICT/SMC/Wyckoff framework | COMPLETE shell + rule ledger | PARTIAL — official market-structure and Wyckoff scope notes exist; detailed rule extraction pending |
 | RTM framework | COMPLETE shell + rule ledger | PARTIAL — valid-swing definition captured; FTR/BSZ/MPL/Quasimodo/Compression rules pending; `rtm-fshcd` missing |
 | Dealer microstructure | COMPLETE shell + definition layer | PARTIAL — theory concepts defined; observable proxies not frozen |
-| Auction Market Theory | COMPLETE shell + definition layer | PARTIAL — Market Profile core and acceptance/rejection defined; canonical POC/Value Area/session algorithms pending |
+| Auction Market Theory | COMPLETE shell + definition + operational layer | PARTIAL — TPO occupancy engine operational; canonical POC/Value Area/initiative-responsive/session formulas still pending |
 | XAUUSD data layer | COMPLETE | MULTI-TIMEFRAME QUALIFIED bundle exists with timebase/source warnings |
 | MTF qualification engine | COMPLETE | VERIFIED on H1/M15/M5/Tick bundle |
 | Iran-gold data layer | COMPLETE | `general-platforms` sample/spec still missing |
@@ -52,15 +52,30 @@ Operationalization readiness is audited separately as:
 
 A `defined` concept does not become a candidate until all machine-rule dependencies are explicit. A concept may remain blocked or `rejected_or_unresolved` when source ambiguity, missing observables, or irreducible discretion prevents promotion.
 
-## Current operationalization findings
+## First operational rule
 
-The first readiness audit intentionally promotes **no framework rule** to machine-ready status yet.
+`amt_tpo_profile_core_v1` is implemented in `research_core/tpo_profile.py` and frozen in `quant/operational/AMT_TPO_PROFILE_CORE.yaml`.
+
+The implementation review confirms:
+
+- closed bars only;
+- forming bars are strict no-ops;
+- externally supplied session IDs only;
+- no timezone/DST inference;
+- Decimal-based integer-tick normalization;
+- inclusive normalized low/high occupancy;
+- strict closed-timestamp ordering;
+- duplicate prevention;
+- incomplete-session marking when an upstream gap is declared;
+- no POC, Value Area, initiative/responsive, entry/exit, profitability, centralized-volume, or dealer-inventory claim.
+
+Operational status is generic. The current XAUUSD bundle still cannot be assigned London/NY/Asia session semantics until its timebase/session provenance is resolved.
+
+## Current blocked areas
 
 - RTM valid swing remains blocked by unresolved objective swing segmentation, termination, tie/nesting, timeframe, and forming-bar rules.
 - Dealer/microstructure concepts remain blocked until measurable observable proxies and lag/sampling policies are frozen.
-- Market Profile / acceptance-rejection remains blocked until profile construction, session/timezone, POC/Value Area, and acceptance-threshold rules are source-frozen.
-
-This is a quality-control outcome, not a project failure: the gate is preventing plausible but unsupported chart rules from being mislabeled as canonical or backtest-ready.
+- AMT acceptance/rejection remains blocked until measurement window, threshold, confirmation, and XAUUSD session/timebase policy are source-frozen.
 
 ## What “complete” means here
 
@@ -95,9 +110,9 @@ Generated equivalents exist where useful, but they are explicitly labelled gener
 
 1. continue authoritative source extraction at exact passage/video-timestamp/chapter-page level;
 2. close operationalization blockers concept-by-concept without cross-framework substitution;
-3. promote only source-supported machine rules to `operational_candidate`;
-4. freeze Strategy Specifications before implementation;
-5. backtest operational rules in the Quant layer with IS/OOS, cost, lookahead, and robustness controls.
+3. keep `amt_tpo_profile_core_v1` descriptive until a downstream Strategy Specification defines how it is used;
+4. freeze any downstream Strategy Specification before implementation/backtest;
+5. backtest only after dataset timebase, execution model, costs, IS/OOS, lookahead, and robustness controls are explicit.
 
 ## Quality gate
 
