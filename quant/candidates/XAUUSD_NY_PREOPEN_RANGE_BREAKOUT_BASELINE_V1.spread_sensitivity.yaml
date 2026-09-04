@@ -1,0 +1,85 @@
+version: 1
+sensitivity_id: xauusd_ny_preopen_range_breakout_baseline_v1_spread_sensitivity
+status: frozen
+sensitivity_class: post_gross_fixed_spread_deduction
+frozen_at_utc: "2026-09-04T08:10:00Z"
+
+purpose: >-
+  Measure whether the already-recorded gross R edge survives fixed-spread deductions derived from
+  the canonical broker tick snapshot. This follow-up does not change any signal, stop, exit, or
+  regime rule and is not a full bid/ask execution backtest.
+
+binding:
+  strategy_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml
+  evaluation_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.evaluation.yaml
+  gross_result_path: quant/results/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.gross.result.yaml
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  dataset_id: xauusd_o_utc_20260904_052959
+  symbol: XAUUSD_o
+  point_size: 0.01
+
+spread_evidence:
+  source: canonical_manifest_tick_quality
+  tick_file: XAUUSD_o_ticks_utc.csv
+  tick_coverage_start_utc: "2026-09-02T05:29:59.017Z"
+  tick_coverage_end_utc: "2026-09-04T05:29:58.905Z"
+  tick_rows: 655779
+  observed_spread_points_min: 12
+  observed_spread_points_median: 22
+  observed_spread_points_max: 151
+  historical_full_sample_spread_calibration_available: false
+
+bar_side_semantics:
+  classification: bid_like_for_sensitivity_only
+  evidence: >-
+    Canonical qualification reconstructed 550 of 551 comparable M5 OHLC groups exactly from tick BID
+    during the tick-overlap window. This is strong local evidence for bid-like bars, but it does not
+    prove historical bid/ask execution semantics for the full March-September sample.
+  exact_historical_execution_claim_prohibited: true
+
+scenarios:
+  - id: observed_min_fixed
+    spread_points: 12
+    role: sensitivity
+  - id: observed_median_fixed
+    spread_points: 22
+    role: primary_gate
+  - id: observed_max_fixed
+    spread_points: 151
+    role: stress_only
+
+application:
+  method: posthoc_single_full_spread_deduction_per_round_trip
+  spread_price: spread_points_times_point_size
+  cost_R_per_trade: spread_price_divided_by_initial_risk
+  adjusted_R: gross_R_minus_cost_R_per_trade
+  signal_path_recomputed: false
+  stop_path_recomputed_with_ask: false
+  commission_applied: false
+  slippage_applied: false
+
+pre_frozen_gate:
+  primary_scenario: observed_median_fixed
+  expectancy_R_must_be_greater_than: 0.0
+  profit_factor_must_be_greater_than: 1.0
+  failure_action: do_not_tune_signal_rules
+
+reporting:
+  overall_metrics_required: true
+  long_short_split_required: true
+  calendar_month_split_required: true
+  all_scenarios_required: true
+
+interpretation_boundaries:
+  fixed_spread_sensitivity_only: true
+  not_historical_spread_calibration: true
+  not_full_execution_path_backtest: true
+  commission_unresolved: true
+  slippage_unresolved: true
+  net_profitability_not_established: true
+  live_trading_prohibited: true
+  signal_rule_changes_prohibited: true
+
+change_control:
+  frozen_sensitivity_spec_is_immutable: true
+  any_scenario_or_gate_change_requires_new_version: true
