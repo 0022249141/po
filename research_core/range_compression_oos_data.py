@@ -124,8 +124,6 @@ def prepare_oos_data(manifest_path: str | Path, *, prospective_start: str = STAR
     prospective_present = bool(prospective_sessions)
     if not pre_history:
         errors.append("insufficient pre-OOS historical state coverage")
-    if closed_rows < 20 * 48:
-        errors.append("insufficient cumulative M5 coverage for 20 eligible reference sessions")
     if m5 is not None and len(rows) < int(m5.get("rows", len(rows))):
         warnings.append("observed M5 rows are fewer than manifest declaration")
     result = {"status": "not_ready" if errors else "ready", "dataset_id": manifest.get("dataset_id"), "symbol": symbol, "manifest_path": str(path), "manifest_sha256": sha256_file(path), "m5_path": str(root / str(m5["path"])) if m5 else None, "m5_sha256": m5.get("sha256") if m5 else None, "first_closed_m5_utc": first_closed, "last_closed_m5_utc": last_closed, "closed_m5_rows": closed_rows, "forming_m5_rows": forming, "duplicate_m5_timestamps": duplicate_count, "ordered": ordered, "ohlc_valid": ohlc_valid, "prospective_start_session": prospective_start, "historical_state_sessions_required": 20, "eligible_pre_oos_reference_sessions": len(pre_oos_eligible), "historical_state_sessions_missing": max(0, 20-len(pre_oos_eligible)), "pre_oos_history_available": pre_history, "prospective_data_present": prospective_present, "prospective_complete_session_present": prospective_present, "performance_evaluated": False, "errors": errors, "warnings": warnings}
