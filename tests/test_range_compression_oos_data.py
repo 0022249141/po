@@ -57,15 +57,32 @@ class ReadinessTests(unittest.TestCase):
             writer=csv.DictWriter(handle,fieldnames=rows[0].keys()); writer.writeheader(); writer.writerows(kept)
         doc['files'][0]['rows']=len(kept); doc['files'][0]['sha256']=hashlib.sha256(csv_path.read_bytes()).hexdigest(); manifest_path.write_text(json.dumps(doc)); return manifest_path
 
+    def make_exact_20_session_bundle(self):
+        from research_core.range_compression_oos_data import _eligible_reference_sessions
+        manifest=self.make_session_bundle(count=21)
+        rows_path=manifest.parent/json.loads(manifest.read_text())['files'][0]['path']
+        with rows_path.open() as handle: rows=list(csv.DictReader(handle))
+        eligible=_eligible_reference_sessions(rows,manifest.parent)
+        self.assertEqual(len(eligible),20)
+        return manifest, [item['session_date'] for item in eligible]
+
+    def _mutate_semantic_target(self, forming):
+        from datetime import date, timedelta
+        from research_core.session_policy import NamedSessionPolicy
+        manifest, session_dates=self.make_exact_20_session_bundle(); result=prepare_oos_data(manifest); self.assertEqual(result['eligible_pre_oos_reference_sessions'],20); self.assertEqual(result['status'],'ready')
+        target_date=session_dates[10]; policy=NamedSessionPolicy.from_yaml(Path(__file__).resolve().parents[1]/'config/session-policies/xauusd-major-sessions.yaml'); ny_start,ny_end=policy.bounds_utc('new_york',date.fromisoformat(target_date)); target_ts=ny_start+timedelta(minutes=5*30); ref_start=ny_start-timedelta(minutes=240); self.assertTrue(ny_start <= target_ts < ny_end); self.assertFalse(ref_start <= target_ts < ny_start)
+        doc=json.loads(manifest.read_text()); csv_path=manifest.parent/doc['files'][0]['path']; rows=list(csv.DictReader(csv_path.open())); matches=[row for row in rows if row['time_utc']==target_ts.isoformat().replace('+00:00','Z')]; self.assertEqual(len(matches),1)
+        if forming: matches[0]['is_closed']='false'; changed=1; updated=rows
+        else: updated=[row for row in rows if row['time_utc']!=matches[0]['time_utc']]; changed=len(rows)-len(updated)
+        self.assertEqual(changed,1); csv_path.write_text('')
+        with csv_path.open('w',newline='') as handle: writer=csv.DictWriter(handle,fieldnames=rows[0].keys()); writer.writeheader(); writer.writerows(updated)
+        doc['files'][0]['rows']=len(updated); doc['files'][0]['sha256']=hashlib.sha256(csv_path.read_bytes()).hexdigest(); manifest.write_text(json.dumps(doc)); return prepare_oos_data(manifest),target_date,target_ts
+
     def test_complete_reference_but_missing_ny_bar_is_ineligible(self):
-        p=self.make_session_bundle(); doc=json.loads(p.read_text()); cp=p.parent/doc['files'][0]['path']; rows=list(csv.DictReader(cp.open())); kept=rows[:48]+rows[49:]; cp.write_text('')
-        with cp.open('w',newline='') as h: w=csv.DictWriter(h,fieldnames=rows[0].keys()); w.writeheader(); w.writerows(kept)
-        doc['files'][0]['rows']=len(kept); doc['files'][0]['sha256']=hashlib.sha256(cp.read_bytes()).hexdigest(); p.write_text(json.dumps(doc)); result=prepare_oos_data(p); self.assertLessEqual(result['eligible_pre_oos_reference_sessions'],20)
+        result,_,_=self._mutate_semantic_target(False); self.assertEqual(result['eligible_pre_oos_reference_sessions'],19); self.assertEqual(result['historical_state_sessions_missing'],1); self.assertFalse(result['pre_oos_history_available']); self.assertEqual(result['status'],'not_ready'); self.assertTrue(any('insufficient pre-OOS historical state coverage' in e for e in result['errors']))
 
     def test_complete_reference_but_forming_ny_bar_is_ineligible(self):
-        p=self.make_session_bundle(); doc=json.loads(p.read_text()); cp=p.parent/doc['files'][0]['path']; rows=list(csv.DictReader(cp.open())); rows[48]['is_closed']='false'; cp.write_text('')
-        with cp.open('w',newline='') as h: w=csv.DictWriter(h,fieldnames=rows[0].keys()); w.writeheader(); w.writerows(rows)
-        doc['files'][0]['sha256']=hashlib.sha256(cp.read_bytes()).hexdigest(); p.write_text(json.dumps(doc)); result=prepare_oos_data(p); self.assertLessEqual(result['eligible_pre_oos_reference_sessions'],20)
+        result,_,_=self._mutate_semantic_target(True); self.assertEqual(result['eligible_pre_oos_reference_sessions'],19); self.assertEqual(result['historical_state_sessions_missing'],1); self.assertFalse(result['pre_oos_history_available']); self.assertEqual(result['status'],'not_ready')
     def test_readiness_reference_reconstruction_matches_frozen_semantics(self):
         from research_core.range_compression_oos_data import _eligible_reference_sessions
         p=self.make_session_bundle(); doc=json.loads(p.read_text()); cp=p.parent/doc['files'][0]['path']; rows=list(csv.DictReader(cp.open())); actual=_eligible_reference_sessions(rows,p.parent); self.assertGreaterEqual(len(actual),20); self.assertEqual(actual[0]['current_reference_width'], actual[0]['reference_high']-actual[0]['reference_low'])
@@ -78,4 +95,7 @@ class ReadinessTests(unittest.TestCase):
     def test_cli_refuses_overwrite(self):
         import subprocess, sys
         p=self.make_bundle(); out=p.parent/'readiness.json'; out.write_text('original'); proc=subprocess.run([sys.executable,'tools/prepare_range_compression_oos_data.py',str(p),'--output',str(out)],capture_output=True,text=True); self.assertNotEqual(proc.returncode,0); self.assertEqual(out.read_text(),'original')
+    def test_sep08_requires_complete_ny_session(self):
+        result=prepare_oos_data(self.make_session_bundle()); self.assertFalse(result['prospective_data_present']); self.assertFalse(result.get('prospective_complete_session_present',False)); self.assertFalse(result['performance_evaluated'])
+        for field in ('net_R','expectancy_R','profit_factor','win_rate','stop_rate','average_R','median_R','delta_expectancy_R','primary_status'): self.assertNotIn(field,result)
 if __name__=='__main__': unittest.main()
