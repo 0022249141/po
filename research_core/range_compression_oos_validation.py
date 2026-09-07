@@ -1,4 +1,4 @@
-﻿"""Strict, closed-schema validation of the prospective protocol and frozen dependencies."""
+"""Strict, closed-schema validation of the prospective protocol and frozen dependencies."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -91,4 +91,3 @@ def validate_range_compression_oos_spec(path=SPEC_PATH, repo_root="."):
     if doc.get("compression",{}).get("lookback") != 20: errors.append("lookback must be 20")
     if doc.get("compression",{}).get("thresholds") != {"compressed":"p < 1/3","normal":"1/3 <= p < 2/3","expanded":"p >= 2/3"}: errors.append("bucket thresholds are immutable")
     return OOSValidationResult(errors,[])
-
