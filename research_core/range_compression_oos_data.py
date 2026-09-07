@@ -30,6 +30,8 @@ def _eligible_reference_sessions(rows, root: Path):
     policy = NamedSessionPolicy.from_yaml(repo_root / str(strategy["session_context"]["policy_path"]))
     zone = ZoneInfo(policy.definitions["new_york"].timezone_name)
     by_ts = {_utc(row["time_utc"]): row for row in rows}
+    expected_ny_bars = int(yaml.safe_load((repo_root / "quant" / "candidates" / "XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.evaluation.yaml").read_text(encoding="utf-8"))["data"]["expected_new_york_m5_bars"])
+    interval = timedelta(minutes=5)
     timestamps = sorted(by_ts)
     if not timestamps:
         return []
@@ -40,6 +42,13 @@ def _eligible_reference_sessions(rows, root: Path):
     while current <= last:
         if current.weekday() in policy.definitions["new_york"].weekdays:
             ny_start, ny_end = policy.bounds_utc("new_york", current)
+            if ny_end > timestamps[-1] or ny_start < timestamps[0]:
+                current += timedelta(days=1)
+                continue
+            ny_opens = [ny_start + interval*i for i in range(expected_ny_bars)]
+            if len(ny_opens) != expected_ny_bars or any(ts not in by_ts or str(by_ts[ts].get("is_closed", "")).lower() not in {"true", "1"} for ts in ny_opens):
+                current += timedelta(days=1)
+                continue
             ref_start = ny_start - timedelta(minutes=int(strategy["baseline_parameters"]["pre_ny_reference_minutes"]))
             opens = [ref_start + timedelta(minutes=5*i) for i in range(int(strategy["reference_range"]["expected_m5_bars"]))]
             if len(opens) == 48 and all(ts in by_ts for ts in opens) and all(str(by_ts[ts].get("is_closed", "")).lower() in {"true", "1"} for ts in opens) and all(policy.contains("london", ts) for ts in opens):
@@ -111,12 +120,13 @@ def prepare_oos_data(manifest_path: str | Path, *, prospective_start: str = STAR
     eligible = _eligible_reference_sessions(rows, root) if rows and m5 is not None else []
     pre_oos_eligible = [item for item in eligible if item["session_date"] < prospective_start]
     pre_history = len(pre_oos_eligible) >= 20
-    prospective_present = bool(last_closed and _utc(last_closed).date().isoformat() >= prospective_start)
+    prospective_sessions = [item["session_date"] for item in eligible if item["session_date"] >= prospective_start]
+    prospective_present = bool(prospective_sessions)
     if not pre_history:
         errors.append("insufficient pre-OOS historical state coverage")
     if closed_rows < 20 * 48:
         errors.append("insufficient cumulative M5 coverage for 20 eligible reference sessions")
     if m5 is not None and len(rows) < int(m5.get("rows", len(rows))):
         warnings.append("observed M5 rows are fewer than manifest declaration")
-    result = {"status": "not_ready" if errors else "ready", "dataset_id": manifest.get("dataset_id"), "symbol": symbol, "manifest_path": str(path), "manifest_sha256": sha256_file(path), "m5_path": str(root / str(m5["path"])) if m5 else None, "m5_sha256": m5.get("sha256") if m5 else None, "first_closed_m5_utc": first_closed, "last_closed_m5_utc": last_closed, "closed_m5_rows": closed_rows, "forming_m5_rows": forming, "duplicate_m5_timestamps": duplicate_count, "ordered": ordered, "ohlc_valid": ohlc_valid, "prospective_start_session": prospective_start, "historical_state_sessions_required": 20, "eligible_pre_oos_reference_sessions": len(pre_oos_eligible), "historical_state_sessions_missing": max(0, 20-len(pre_oos_eligible)), "pre_oos_history_available": pre_history, "prospective_data_present": prospective_present, "performance_evaluated": False, "errors": errors, "warnings": warnings}
+    result = {"status": "not_ready" if errors else "ready", "dataset_id": manifest.get("dataset_id"), "symbol": symbol, "manifest_path": str(path), "manifest_sha256": sha256_file(path), "m5_path": str(root / str(m5["path"])) if m5 else None, "m5_sha256": m5.get("sha256") if m5 else None, "first_closed_m5_utc": first_closed, "last_closed_m5_utc": last_closed, "closed_m5_rows": closed_rows, "forming_m5_rows": forming, "duplicate_m5_timestamps": duplicate_count, "ordered": ordered, "ohlc_valid": ohlc_valid, "prospective_start_session": prospective_start, "historical_state_sessions_required": 20, "eligible_pre_oos_reference_sessions": len(pre_oos_eligible), "historical_state_sessions_missing": max(0, 20-len(pre_oos_eligible)), "pre_oos_history_available": pre_history, "prospective_data_present": prospective_present, "prospective_complete_session_present": prospective_present, "performance_evaluated": False, "errors": errors, "warnings": warnings}
     return result

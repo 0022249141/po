@@ -32,7 +32,7 @@ class ReadinessTests(unittest.TestCase):
 
     def test_deterministic_and_manifest_selected_path(self):
         p=self.make_bundle(); a=prepare_oos_data(p); b=prepare_oos_data(p); self.assertEqual(a,b); self.assertTrue(a['m5_path'].endswith('m5.csv'))
-    def make_session_bundle(self, count=20):
+    def make_session_bundle(self, count=25):
         from datetime import date, datetime, timedelta, timezone
         from research_core.session_policy import NamedSessionPolicy
         import yaml
@@ -42,6 +42,8 @@ class ReadinessTests(unittest.TestCase):
                 start,_=policy.bounds_utc('new_york',day); ref=start-timedelta(minutes=240)
                 for i in range(48):
                     ts=ref+timedelta(minutes=5*i); rows.append({'time_utc':ts.isoformat().replace('+00:00','Z'),'open':'1','high':'2','low':'0.5','close':'1.5','is_closed':'true'})
+                for i in range(108):
+                    ts=start+timedelta(minutes=5*i); rows.append({'time_utc':ts.isoformat().replace('+00:00','Z'),'open':'1','high':'2','low':'0.5','close':'1.5','is_closed':'true'})
                 made+=1
             day+=timedelta(days=1)
         return self.make_bundle(rows=rows)
