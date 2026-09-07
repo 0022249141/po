@@ -84,9 +84,14 @@ class ReadinessTests(unittest.TestCase):
     def test_complete_reference_but_forming_ny_bar_is_ineligible(self):
         result,_,_=self._mutate_semantic_target(True); self.assertEqual(result['eligible_pre_oos_reference_sessions'],19); self.assertEqual(result['historical_state_sessions_missing'],1); self.assertFalse(result['pre_oos_history_available']); self.assertEqual(result['status'],'not_ready')
     def test_readiness_reference_reconstruction_matches_frozen_semantics(self):
+        import yaml
         from research_core.range_compression_oos_data import _eligible_reference_sessions
-        p=self.make_session_bundle(); doc=json.loads(p.read_text()); cp=p.parent/doc['files'][0]['path']; rows=list(csv.DictReader(cp.open())); actual=_eligible_reference_sessions(rows,p.parent); self.assertGreaterEqual(len(actual),20); self.assertEqual(actual[0]['current_reference_width'], actual[0]['reference_high']-actual[0]['reference_low'])
-
+        from research_core.range_compression_study import _reconstruct_eligible_reference_widths
+        manifest, _ = self.make_exact_20_session_bundle(); doc=json.loads(manifest.read_text()); csv_path=manifest.parent/doc['files'][0]['path']; rows=list(csv.DictReader(csv_path.open())); readiness=_eligible_reference_sessions(rows, manifest.parent)
+        root=Path(__file__).resolve().parents[1]; strategy=yaml.safe_load((root/'quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml').read_text()); evaluation=yaml.safe_load((root/'quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.evaluation.yaml').read_text()); spec={'data':{'m5_bars_path':str(csv_path),'cutoff_utc':rows[-1]['time_utc'],'timeframe':'M5'}}; frozen,_=_reconstruct_eligible_reference_widths(spec,strategy,evaluation,{'evaluated_sessions':len(readiness)},root)
+        self.assertEqual(len(readiness),len(frozen));
+        for actual, expected in zip(readiness,frozen):
+            for field in ('session_date','reference_high','reference_low','current_reference_width'): self.assertEqual(actual[field],expected[field])
     def test_dst_boundaries_are_policy_derived(self):
         from datetime import date
         from research_core.session_policy import NamedSessionPolicy
