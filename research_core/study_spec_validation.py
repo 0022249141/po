@@ -89,6 +89,15 @@ def validate_study_spec(path: str | Path, repo_root: str | Path = ".") -> StudyS
     except (OSError, ValueError, yaml.YAMLError) as exc:
         return StudySpecValidationResult([str(exc)], warnings)
 
+    if (
+        doc.get("study_class") == "posthoc_exploratory_diagnostic"
+        and doc.get("study_id") == "xauusd_ny_preopen_range_compression_exploratory_v1"
+    ):
+        from .range_compression_study_validation import validate_range_compression_study_spec
+
+        specialized = validate_range_compression_study_spec(spec_path, root)
+        return StudySpecValidationResult(list(specialized.errors), list(specialized.warnings))
+
     for field in (
         "version",
         "study_id",

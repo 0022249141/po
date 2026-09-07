@@ -1,0 +1,135 @@
+version: 1
+study_id: xauusd_ny_preopen_range_compression_exploratory_v1
+study_name: XAUUSD_NY_PREOPEN_RANGE_COMPRESSION_EXPLORATORY_V1
+status: frozen
+study_type: posthoc_exploratory_diagnostic
+study_class: posthoc_exploratory_diagnostic
+owner: project
+frozen_at_utc: "2026-09-04T08:30:00Z"
+
+research_question: >-
+  On the already completed, bound V1 gross-signal backtest sample, is breakout outcome descriptively
+  associated with a causal relative pre-New-York reference-range compression measure, with particular
+  descriptive attention to the previously reported High-regime Short deterioration? This is a post-hoc
+  diagnostic only and does not test, change, or promote the V1 strategy.
+
+source_repository_baseline_commit: 3aa528cbbed793db214093671aac249391723336
+source_backtest_sha256: BCDD2CC10DAA31AC64C682E376FA9357C87296792E80C6785162C2EB25046238
+
+source_binding:
+  strategy_spec_id: xauusd_ny_preopen_range_breakout_baseline_v1
+  strategy_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.strategy.yaml
+  strategy_spec_sha256: 02B10FBA616A5387B245FC55845252E7BBA56D66E64B32D6E36D97413887FC60
+  strategy_status_required: frozen_signal_spec
+  evaluation_id: xauusd_ny_preopen_range_breakout_baseline_v1_gross_signal_eval
+  evaluation_spec_path: quant/candidates/XAUUSD_NY_PREOPEN_RANGE_BREAKOUT_BASELINE_V1.evaluation.yaml
+  evaluation_spec_sha256: 4CD5F006020B53E0BB7AAF0B788DDE1225827F95D506A8FEF7AFA58E4080AA8D
+  source_backtest_path: MT5_UTC_EXPORTS/XAUUSD_o_20260904_052959_UTC/strategy_signal_backtest_v1.json
+  source_backtest_class: gross_signal_research_v1
+  source_backtest_trade_ledger_required: true
+  source_backtest_outcomes_are_read_only: true
+  source_regime_is_reporting_only: true
+
+data:
+  market: XAUUSD
+  symbol: XAUUSD_o
+  dataset_id: xauusd_o_utc_20260904_052959
+  dataset_manifest: data/manifests/XAUUSD_o_UTC_20260904_052959.json
+  timeframe: M5
+  input_timebase: verified_utc
+  cutoff_utc: "2026-09-04T05:29:59.763793Z"
+  closed_bars_only: true
+  m5_bars_path: MT5_UTC_EXPORTS/XAUUSD_o_20260904_052959_UTC/XAUUSD_o_M5_bars_utc.csv
+  m5_bars_sha256: E3050E9B46B24CFA27DF27EDD7649911998DC662BB356F1715D789F232E7FECA
+
+reference_width:
+  current_reference_width: reference_high - reference_low
+  eligibility_rule: >-
+    Complete positive pre-New-York reference range and complete New-York session under the bound frozen
+    V1 strategy and frozen evaluation; no-trigger eligible dates remain in the reference-width history.
+  source_history_includes_no_trigger_eligible_dates: true
+  source_history_excludes_incomplete_or_non_positive_reference_dates: true
+
+causal_features:
+  lookback_eligible_reference_widths: 20
+  lagged_baseline:
+    statistic: median
+    window: immediately_preceding_20_eligible_reference_widths
+    current_date_in_baseline: false
+    centered_window: false
+    shift_direction: lagged_only
+  primary_feature:
+    name: relative_range_ratio
+    formula: current_reference_width / lagged_20_reference_width_median
+  causal_rank:
+    target: current_reference_width
+    comparator_window: immediately_preceding_20_eligible_reference_widths_only
+    percentile_method: midrank_fraction_count_less_plus_half_equal_over_n
+  frozen_descriptive_buckets:
+    thresholds:
+      compressed_upper_exclusive: "1/3"
+      normal_lower_inclusive: "1/3"
+      normal_upper_exclusive: "2/3"
+      expanded_lower_inclusive: "2/3"
+    labels:
+      compressed: percentile < 1/3
+      normal: 1/3 <= percentile < 2/3
+      expanded: percentile >= 2/3
+
+breakout_penetration:
+  long: entry_price - reference_high
+  short: reference_low - entry_price
+  secondary_feature:
+    name: penetration_ratio
+    formula: breakout_penetration / current_reference_width
+
+causality_policy:
+  current_day_leakage_prohibited: true
+  current_day_in_lagged_baseline_prohibited: true
+  centered_windows_prohibited: true
+  negative_shifts_prohibited: true
+  future_data_prohibited: true
+  current_reference_width_is_complete_before_new_york_breakout_trigger: true
+  source_trade_outcomes_do_not_define_features: true
+
+reporting:
+  trade_filtering_permitted: false
+  retain_all_source_trades_in_annotated_ledger: true
+  warmup_without_20_prior_widths: retain_unassigned_in_ledger_and_overall_breakdowns
+  metrics:
+    - trades
+    - net_R
+    - expectancy_R
+    - profit_factor
+    - win_rate
+    - stop_rate
+    - average_R
+    - median_R
+  breakdowns:
+    - overall
+    - by_side
+    - by_compression_bucket
+    - side_x_compression_bucket
+    - regime_x_side_x_compression_bucket
+  minimum_cell_size: 10
+  underpowered_label: underpowered_descriptive_only
+  statistical_significance_test: none
+
+interpretation_boundaries:
+  descriptive_only: true
+  statistical_significance_claim_prohibited: true
+  profitability_claim_prohibited: true
+  strategy_promotion_prohibited: true
+  live_trading_permission: false
+  automatic_filter_generation_prohibited: true
+  same_sample_findings_cannot_validate_v2: true
+  source_regime_definition_not_modified: true
+  gross_R_is_not_net_profitability: true
+
+change_control:
+  frozen_spec_is_immutable: true
+  any_change_requires_new_version: true
+  no_lookback_tuning_after_results: true
+  no_bucket_threshold_tuning_after_results: true
+  no_strategy_parameter_tuning_after_results: true
+  no_hypothesis_rewrite_after_results: true
