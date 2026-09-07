@@ -1,0 +1,25 @@
+version: 1
+study_id: xauusd_ny_preopen_range_compression_prospective_oos_v1
+study_name: XAUUSD_NY_PREOPEN_RANGE_COMPRESSION_PROSPECTIVE_OOS_V1
+study_class: prospective_oos_replication
+status: frozen
+implementation_source_commit: 940dc830a07bc4b168508f8cc514e2fe25936ca0
+exploratory_study_id: xauusd_ny_preopen_range_compression_exploratory_v1
+strategy_spec_id: xauusd_ny_preopen_range_breakout_baseline_v1
+strategy_spec_sha256: 02B10FBA616A5387B245FC55845252E7BBA56D66E64B32D6E36D97413887FC60
+source_backtest_sha256: BCDD2CC10DAA31AC64C682E376FA9357C87296792E80C6785162C2EB25046238
+dataset_id: xauusd_o_utc_20260904_052959
+prospective_outcome_start_session: '2026-09-08'
+historical_state_initialization_permitted: true
+historical_trade_outcomes_prohibited_from_oos_metrics: true
+primary_group: {side: short, compression_bucket: [compressed]}
+comparator_group: {side: short, compression_bucket: [normal, expanded]}
+secondary_group: {regime: high, side: short, compression_bucket: [compressed]}
+secondary_minimum_trades: 10
+secondary_status_before_gate: underpowered_descriptive_only
+compression: {implementation: research_core/range_compression_study.py, lookback: 20, baseline: median, current_session_excluded: true, thresholds: {compressed: 'p < 1/3', normal: '1/3 <= p < 2/3', expanded: 'p >= 2/3'}}
+minimum_oos_sample: {compressed_short: 20, noncompressed_short: 20}
+no_peeking_policy: true
+no_restart_policy: true
+interpretation_restrictions: {descriptive_only: true, statistical_significance: false, validated_profitability: false, automatic_strategy_v2: false}
+live_trading_permission: false

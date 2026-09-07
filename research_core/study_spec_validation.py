@@ -98,6 +98,11 @@ def validate_study_spec(path: str | Path, repo_root: str | Path = ".") -> StudyS
         specialized = validate_range_compression_study_spec(spec_path, root)
         return StudySpecValidationResult(list(specialized.errors), list(specialized.warnings))
 
+    if doc.get("study_class") == "prospective_oos_replication" and doc.get("study_id") == "xauusd_ny_preopen_range_compression_prospective_oos_v1":
+        from .range_compression_oos_validation import validate_range_compression_oos_spec
+        specialized = validate_range_compression_oos_spec(spec_path, root)
+        return StudySpecValidationResult(list(specialized.errors), list(specialized.warnings))
+
     for field in (
         "version",
         "study_id",
